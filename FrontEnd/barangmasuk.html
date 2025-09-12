@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Barang Masuk</title>
+  <link rel="stylesheet" href="barangmasuk.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+      <h1><a href="dashboard_admin.html">Manajemen Gudang</a></h1>
+      <nav style="display: flex; gap: 15px; align-items: center;">
+        <a href="dashboard_admin.html">Dashboard</a>
+        <a href="barangmasuk.html">Barang Masuk</a>
+        <a href="#">Laporan</a>
+        <button onclick="logout()" style="padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+          Logout
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+
+    <div class="form-container">
+      <h2>Form Input Barang Masuk</h2>
+      <form id="barangForm">
+        <input type="text" id="namaBarang" placeholder="Nama Barang" required>
+        <input type="text" id="merekInput" placeholder="Masukkan merek" required>
+        <input type="number" id="jumlahBarang" placeholder="Jumlah Barang" required>
+        <input type="text" id="hargaBarang" placeholder="Harga Barang (Rp)" required>
+
+  
+
+        <!-- 🔹 Tanggal Masuk -->
+        <div style="display: flex; align-items: center; margin: 10px 0; gap: 15px;">
+          <p style="margin: 0; font-weight: bold; min-width: 120px; opacity: 0.7;">
+            Tanggal Masuk
+          </p>
+          <input 
+            type="date" 
+            id="tanggalBarang" 
+            required
+            style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;"
+          >
+        </div>
+        
+        <!-- 🔹 Satuan -->
+<div style="display: flex; align-items: center; margin: 10px 0; gap: 15px;">
+  <p style="margin: 0; font-weight: bold; min-width: 120px; opacity: 0.7;">
+    Satuan
+  </p>
+  <select id="satuanDropdown" required style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
+    <option value="">-- Pilih satuan --</option>
+    <option value="__tambah__">➕ Tambah satuan baru...</option>
+    
+  </select>
+</div>
+
+
+        <!-- 🔹 Kategori -->
+        <div style="display: flex; align-items: center; margin: 10px 0; gap: 15px;">
+          <p style="margin: 0; font-weight: bold; min-width: 120px; opacity: 0.7;">
+            Kategori
+          </p>
+          <select id="kategoriDropdown" required style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
+            <option value="">-- Pilih kategori --</option>
+            <!-- opsi kategori dari Firestore akan dimuat di sini -->
+            <option value="__tambah__">➕ Tambah kategori baru...</option>
+          </select>
+        </div>
+<!-- 🔹 Jenis Dana -->
+<div style="display: flex; align-items: center; margin: 10px 0; gap: 15px;">
+  <p style="margin: 0; font-weight: bold; min-width: 120px; opacity: 0.7;">
+    Jenis Dana
+  </p>
+  <select id="danaDropdown" required style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
+    <option value="">-- Pilih jenis dana --</option>
+    <option value="__tambah__">➕ Tambah jenis dana baru...</option>
+  </select>
+</div>
+
+  
+<!-- 🔹 Foto Barang (opsional) -->
+<div style="display: flex; align-items: center; margin: 10px 0; gap: 15px;">
+  <p style="margin: 0; font-weight: bold; min-width: 120px; opacity: 0.7;">
+    Foto Barang
+  </p>
+  <input type="file" id="fotoInput" accept="image/*" 
+         style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
+</div>
+
+<!-- Keterangan -->
+<div class="form-row">
+
+  <input type="text" id="keteranganInput" placeholder="Isi keterangan">
+</div>
+
+
+<input type="text" id="kodeBarang" placeholder="Kode Barang" required>
+
+
+       <button type="submit" 
+    style="
+        width: 100% !important;
+        padding: 12px 15px !important;
+        margin-top: 15px !important;
+        background: linear-gradient(90deg, #4a90e2, #357abd) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: bold !important;
+        font-size: 16px !important;
+        cursor: pointer !important;
+        transition: all 0.3s !important;
+    "
+>
+    Simpan
+</button>
+
+      </form>
+      <div id="status">⏳ Mengecek koneksi Firestore...</div>
+      <!-- Tambahkan di dalam <form> atau di mana pun sesuai layout -->
+
+        
+        <!-- Bagian upload foto terpisah -->
+<!-- Bagian upload foto terpisah -->
+<div style="display: flex; align-items: center; margin: 10px 0; gap: 15px;">
+  <p style="margin: 0; font-weight: bold; min-width: 120px; opacity: 0.7;">
+    Upload Foto Barang
+  </p>
+  <input type="file" id="fotoUploadInput" accept="image/*" style="padding: 8px 12px; border-radius: 8px;">
+  <button type="button" id="uploadFotoBtn">Upload Foto</button>
+</div>
+
+<div id="uploadStatus" style="margin-top:5px; color: green;"></div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>
+  </footer>
+
+<script src="barangmasuk.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,203 @@
+/* Reset ringan */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Body & Layout */
+body {
+  background-color: #f4f6f8;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  background-color: #4a90e2;
+  color: #fff;
+  padding: 15px 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+header .container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 a {
+  color: white;
+  text-decoration: none;
+  font-size: 22px;
+  transition: color 0.3s;
+}
+
+header h1 a:hover {
+  color: #dce6f1;
+}
+
+/* Navigasi */
+nav a {
+  color: white;
+  margin-left: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  position: relative;
+  transition: opacity 0.3s, transform 0.3s;
+  opacity: 0.85;
+}
+
+nav a.active {
+  opacity: 1;
+  font-weight: 700;
+}
+
+nav a:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Animasi garis bawah */
+nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after,
+nav a.active::after {
+  width: 100%;
+}
+
+/* Main */
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* Form container */
+.form-container {
+  background-color: #fff;
+  padding: 35px 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.form-container h2 {
+  margin-bottom: 20px;
+  color: #4a90e2;
+}
+
+/* Input & Button */
+input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 8px 0;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: all 0.3s;
+}
+
+input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74,144,226,0.4);
+  outline: none;
+}
+
+button {
+  background: linear-gradient(90deg, #4a90e2, #357abd);
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: linear-gradient(90deg, #357abd, #2a5c9e);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* Tanggal input wrapper */
+.form-row {
+  display: flex;
+  align-items: center;
+  margin: 12px 0;
+  gap: 15px;
+  flex-wrap: wrap;
+  text-align: left;
+}
+
+.form-row label {
+  min-width: 120px;
+  font-weight: bold;
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+.form-row input[type="date"] {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+/* Status message */
+#status {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Footer */
+footer {
+  background-color: #f1f3f6;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 14px;
+  color: #777;
+  margin-top: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header .container {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  nav a {
+    margin: 0 10px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-row label {
+    min-width: unset;
+  }
+}

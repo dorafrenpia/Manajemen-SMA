@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Barang Masuk</title>
+  <!-- Hubungkan CSS eksternal -->
+  <link rel="stylesheet" href="dashboard_admin.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <h1><a href="dashboard_admin.html">Manajemen Gudang</a></h1>
+      <nav>
+        <a href="dashboard_admin.html">Dashboard</a>
+        <a href="barangmasuk.html">Barang Masuk</a>
+        <a href="#">Laporan</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="dashboard-container">
+      <h2>Dashboard Barang Masuk</h2>
+
+      <div id="status">⏳ Memuat data...</div>
+
+      <!-- Search field -->
+      <label for="searchInput">Cari Barang (Kode / Nama):</label>
+      <input type="text" id="searchInput" placeholder="Ketik kode atau nama...">
+
+      <div class="table-container">
+        <table id="barangTable">
+          <thead>
+  <tr>
+    <th>
+      <span class="th-content">
+        Kode Barang
+        <button id="sortKodeBtn" class="sort-btn">⇅</button>
+      </span>
+    </th>
+    <th>
+      <span class="th-content">
+        Nama Barang
+        <button id="sortNamaBtn" class="sort-btn">⇅</button>
+      </span>
+    </th>
+    <th>
+      <span class="th-content">
+        Jumlah
+        <button id="sortJumlahBtn" class="sort-btn">⇅</button>
+      </span>
+    </th>
+    <th>
+      <span class="th-content">
+        Harga (Rp)
+        <button id="sortHargaBtn" class="sort-btn">⇅</button>
+      </span>
+    </th>
+    <th>
+      <span class="th-content">
+        Tanggal Barang
+        <button id="sortTanggalBtn" class="sort-btn">⇅</button>
+      </span>
+    </th>
+    <th>
+      <span class="th-content">
+        Input Sistem
+        <button id="sortInputBtn" class="sort-btn">⇅</button>
+      </span>
+    </th>
+  </tr>
+</thead>
+
+          <tbody>
+            <!-- Data dari Firestore -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>
+  </footer>
+
+  <!-- Firebase + JS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    // 🔹 Konfigurasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAVsG_cBB_Ksbk4oqkXTH6oTlNKl-p-bU",
+      authDomain: "manajemen-sma.firebaseapp.com",
+      projectId: "manajemen-sma",
+      storageBucket: "manajemen-sma.firebasestorage.app",
+      messagingSenderId: "1008287671477",
+      appId: "1:1008287671477:web:7829d82b3da953d2598afc",
+      measurementId: "G-ZSFSXW3C2C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const statusEl = document.getElementById("status");
+    const tableBody = document.querySelector("#barangTable tbody");
+    const searchInput = document.getElementById("searchInput");
+
+    // Tombol sort
+    const sortBtnJumlah = document.getElementById("sortJumlahBtn");
+    const sortBtnHarga = document.getElementById("sortHargaBtn");
+    const sortBtnTanggal = document.getElementById("sortTanggalBtn");
+    const sortBtnInput = document.getElementById("sortInputBtn");
+    const sortBtnKode = document.getElementById("sortKodeBtn");
+const sortBtnNama = document.getElementById("sortNamaBtn");
+
+
+    // Simpan semua data Firestore agar bisa difilter & diurutkan
+    let allData = [];
+    let sortOrder = { jumlah: null, harga: null, tanggal: null, input: null };
+
+    // 🔹 Format Rupiah
+    function formatRupiah(angka) {
+      return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0
+      }).format(angka);
+    }
+
+    // 🔹 Render tabel
+    function renderTable(data) {
+      tableBody.innerHTML = "";
+
+      if (data.length === 0) {
+        statusEl.textContent = "⚠️ Tidak ada data yang cocok!";
+        return;
+      }
+
+      data.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.kodeBarang}</td>
+          <td>${item.namaBarang}</td>
+          <td>${item.jumlahBarang}</td>
+          <td>${formatRupiah(item.hargaBarang)}</td>
+          <td>${item.tanggalBarang || '-'}</td>
+          <td>${item.createdAt?.toDate ? item.createdAt.toDate().toLocaleString("id-ID") : '-'}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      statusEl.textContent = `🟢 ${data.length} data ditampilkan`;
+    }
+
+    // 🔹 Load data dari Firestore
+    async function loadData() {
+      try {
+        const snapshot = await getDocs(collection(db, "barangMasuk"));
+        allData = snapshot.docs.map(doc => doc.data());
+        renderTable(allData);
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = `❌ Gagal memuat data: ${err.message}`;
+      }
+    }
+
+    // 🔹 Filter data saat search
+    searchInput.addEventListener("input", e => {
+      const keyword = e.target.value.toLowerCase();
+      const filtered = allData.filter(item => 
+        item.kodeBarang.toLowerCase().startsWith(keyword) ||
+        item.namaBarang.toLowerCase().startsWith(keyword)
+      );
+      renderTable(filtered);
+    });
+function resetButtons() {
+  [sortBtnKode, sortBtnNama, sortBtnJumlah, sortBtnHarga, sortBtnTanggal, sortBtnInput]
+    .forEach(b => b.textContent = "⇅");
+}
+
+    // 🔹 Fungsi umum untuk sort
+   function handleSort(field, type, btn) {
+  resetButtons();
+
+  if (sortOrder[field] === null || sortOrder[field] === "asc") {
+    // Descending
+    allData.sort((a, b) => {
+      if (type === "number") return b[field] - a[field];
+      if (type === "string") return b[field].localeCompare(a[field]);
+      if (type === "date") return new Date(b[field]) - new Date(a[field]);
+      if (type === "timestamp") return (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0);
+    });
+    sortOrder[field] = "desc";
+    btn.textContent = "↓";
+  } else {
+    // Ascending
+    allData.sort((a, b) => {
+      if (type === "number") return a[field] - b[field];
+      if (type === "string") return a[field].localeCompare(b[field]);
+      if (type === "date") return new Date(a[field]) - new Date(b[field]);
+      if (type === "timestamp") return (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0);
+    });
+    sortOrder[field] = "asc";
+    btn.textContent = "↑";
+  }
+  renderTable(allData);
+}
+sortBtnKode.addEventListener("click", () => handleSort("kodeBarang", "string", sortBtnKode));
+sortBtnNama.addEventListener("click", () => handleSort("namaBarang", "string", sortBtnNama));
+sortBtnJumlah.addEventListener("click", () => handleSort("jumlahBarang", "number", sortBtnJumlah));
+sortBtnHarga.addEventListener("click", () => handleSort("hargaBarang", "number", sortBtnHarga));
+sortBtnTanggal.addEventListener("click", () => handleSort("tanggalBarang", "date", sortBtnTanggal));
+sortBtnInput.addEventListener("click", () => handleSort("createdAt", "timestamp", sortBtnInput));
+
+    // Panggil load data saat halaman dibuka
+    loadData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin</title>
+  <link rel="stylesheet" href="dashboard_admin.css">
+  <style>
+    .sort-btn { cursor: pointer; margin-left: 5px; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+      <h1><a href="dashboard_admin.html">Manajemen Gudang</a></h1>
+      <nav style="display: flex; gap: 15px; align-items: center;">
+        <a href="dashboard_admin.html">Dashboard</a>
+        <a href="barangmasuk.html">Barang Masuk</a>
+        <a href="#">Laporan</a>
+        <button onclick="logout()" style="font-weight:  bold;padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+          Logout
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="dashboard-container">
+      <h2>Dashboard Barang Masuk</h2>
+      <div id="status">⏳ Memuat data...</div>
+
+      <label for="searchInput">Cari Barang (Kode / Nama):</label>
+      <input type="text" id="searchInput" placeholder="Ketik kode atau nama...">
+
+      <div class="table-container">
+        <table id="barangTable">
+         <thead>
+  <tr>
+    <th>No</th>
+
+    <th>Kode Barang <button id="sortKodeBtn" class="sort-btn">⇅</button></th>
+    <th>Nama Barang <button id="sortNamaBtn" class="sort-btn">⇅</button></th>
+    <th>Jumlah <button id="sortJumlahBtn" class="sort-btn">⇅</button></th>
+    <th>Harga (Rp) <button id="sortHargaBtn" class="sort-btn">⇅</button></th>
+    <th>Tanggal Barang <button id="sortTanggalBtn" class="sort-btn">⇅</button></th>
+    <th>Input Sistem <button id="sortInputBtn" class="sort-btn">⇅</button></th>
+    <th>Kategori
+      <select id="kategoriDropdown">
+        <option value="">-- Pilih kategori --</option>
+        <option value="__tambah__">➕ Tambah kategori baru...</option>
+      </select>
+    </th>
+ <th>Satuan
+  <select id="satuanDropdown">
+    <option value="">-- Pilih satuan --</option>
+  </select>
+</th>
+<th>Jenis Dana
+  <select id="jenisDanaDropdown">
+    <option value="">-- Pilih jenis dana --</option>
+  </select>
+</th>
+<th>Merek</th>
+
+<th>Foto</th>
+    <th>Keterangan</th>
+  </tr>
+</thead>
+
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>
+  </footer>
+
+<script type="module">
+
+</script>
+
+
+<!-- Modal Edit -->
+<div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+  <div style="background:white; padding:20px; border-radius:8px; width:400px; position:relative;">
+    <h3>Edit Barang</h3>
+    <form id="editForm">
+      <div><label>Kode Barang:</label> <span id="editKode"></span></div>
+      <div><label>Nama Barang:</label> <input type="text" id="editNama" required></div>
+      <div><label>Merek:</label> <input type="text" id="editMerek" required></div>
+      <div><label>Jumlah:</label> <input type="number" id="editJumlah" required></div>
+      <div><label>Harga (Rp):</label> <input type="number" id="editHarga" required></div>
+      <div><label>Tanggal:</label> <input type="date" id="editTanggal"></div>
+      <div><label>Kategori:</label> <input type="text" id="editKategori"></div>
+      <div><label>Satuan:</label> <input type="text" id="editSatuan"></div>
+      <div><label>Jenis Dana:</label> <input type="text" id="editDana"></div>
+      <div><label>Keterangan:</label> <input type="text" id="editKeterangan"></div>
+      <div><label>Foto (opsional):</label> 
+        <input type="file" id="editFoto" accept="image/*">
+        <div id="editFotoPreview" style="margin-top:10px;"></div>
+      </div>
+      <div style="margin-top:10px; text-align:right;">
+        <button type="button" id="cancelEdit">❌ Cancel</button>
+        <button type="submit">✔️ Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

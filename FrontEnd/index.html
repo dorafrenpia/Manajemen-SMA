@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Manajemen Gudang</title>
+</head>
+<body>
+  <h2>Login ke Sistem</h2>
+
+  <form id="loginForm">
+    <label>Username:</label><br>
+    <input type="text" id="username" required><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" id="password" required><br><br>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <p>Belum punya akun? <a href="register.html">Daftar di sini</a></p>
+
+  <div id="status"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    // Konfigurasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAVsG_cBB_Ksbk4oqkXTH6oTlNKl-p-bU",
+      authDomain: "manajemen-sma.firebaseapp.com",
+      projectId: "manajemen-sma",
+      storageBucket: "manajemen-sma.firebasestorage.app",
+      messagingSenderId: "1008287671477",
+      appId: "1:1008287671477:web:7829d82b3da953d2598afc",
+      measurementId: "G-ZSFSXW3C2C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("loginForm");
+    const statusEl = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+     if (username === "root" && password === "root") {
+  localStorage.setItem("isLoggedIn", "true"); // simpan status login
+  statusEl.textContent = "✅ Login sebagai ADMIN berhasil...";
+  setTimeout(() => {
+    window.location.href = "dashboard_admin.html";
+  }, 1500);
+  return;
+}
+
+
+      // 🔹 Cek user biasa dari Firestore
+      try {
+        const snapshot = await getDocs(collection(db, "users"));
+        let success = false;
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.username === username && data.password === password) {
+            success = true;
+          }
+        });
+
+        if (success) {
+          sessionStorage.setItem("loggedIn", "user"); // simpan status login
+          statusEl.textContent = "✅ Login USER berhasil, masuk ke dashboard...";
+          setTimeout(() => {
+            window.location.replace("dashboard_user.html");
+          }, 1500);
+        } else {
+          statusEl.textContent = "❌ Username atau password salah!";
+        }
+      } catch (err) {
+        statusEl.textContent = "❌ Error: " + err.message;
+      }
+    });
+
+    // 🔹 Kalau user masih login, langsung lempar ke dashboard
+    const statusLogin = sessionStorage.getItem("loggedIn");
+    if (statusLogin === "admin") {
+      window.location.replace("dashboard_admin.html");
+    } else if (statusLogin === "user") {
+      window.location.replace("dashboard_user.html");
+    }
+  </script>
+</body>
+</html>
