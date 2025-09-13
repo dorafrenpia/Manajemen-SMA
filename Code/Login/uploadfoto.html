@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload ke Google Drive</title>
+</head>
+<body>
+
+  <h2>Upload Foto ke Google Drive</h2>
+
+  <button id="loginBtn">Login dengan Google</button><br><br>
+  <input type="file" id="fileInput" />
+  <button id="sendBtn" disabled>Kirim ke Drive</button>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+    const CLIENT_ID = "1008287671477-rm03r2f3e52h8c95047uk3kjqlo52atn.apps.googleusercontent.com";
+    const SCOPES = "https://www.googleapis.com/auth/drive.file";
+    const FOLDER_ID = "13JY_VRcLnsLIYbQ3hlxcpu5gv12XNfpB";
+
+    let accessToken = "";
+    let tokenClient;
+
+    // Tombol Login
+    document.getElementById("loginBtn").onclick = () => {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: (tokenResponse) => {
+          if(tokenResponse.access_token){
+            accessToken = tokenResponse.access_token;
+            document.getElementById("sendBtn").disabled = false;
+            alert("Login berhasil!");
+          }
+        },
+      });
+      tokenClient.requestAccessToken();
+    };
+
+    // Tombol Upload
+    document.getElementById("sendBtn").onclick = async () => {
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) return alert("Pilih file dulu");
+
+      const metadata = {
+        name: file.name,
+        parents: [FOLDER_ID]
+      };
+
+      const form = new FormData();
+      form.append("metadata", new Blob([JSON.stringify(metadata)], {type: "application/json"}));
+      form.append("file", file);
+
+      try {
+        const response = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + accessToken },
+          body: form
+        });
+        const result = await response.json();
+        if(result.id){
+          alert("Berhasil upload! ID file: " + result.id);
+        } else {
+          alert("Gagal upload: " + JSON.stringify(result));
+        }
+      } catch(err) {
+        alert("Terjadi error: " + err);
+      }
+    };
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+</head>
+<body>
+  <h2>Form Register</h2>
+<form id="registerForm">
+  <input type="text" id="nama" placeholder="Nama Lengkap" required><br>
+  <input type="text" id="nisn" placeholder="NISN" required><br>
+  <input type="email" id="email" placeholder="Email" required><br>
+  <input type="text" id="telepon" placeholder="No. Telepon" required><br>
+  <input type="password" id="password" placeholder="Password" required><br>
+  <input type="password" id="confirmPassword" placeholder="Konfirmasi Password" required><br>
+  <button type="submit">Daftar</button>
+</form>
+
+<p id="status"></p>
+
+<script type="module" src="firebase.js"></script>
+<script type="module" src="register.js"></script>
+
+</body>
+</html>

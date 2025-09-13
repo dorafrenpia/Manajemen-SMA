@@ -33,7 +33,9 @@ let allData = [];
 let currentEditIndex = null;
 
 // 🔹 Proteksi login
-if (!localStorage.getItem("isLoggedIn")) window.location.replace("index.html");
+if (!localStorage.getItem("isLoggedIn")) {
+  window.location.replace("https://manajemen-sma.web.app/Login/login.html");
+}
 
 // 🔹 Format Rupiah
 function formatRupiah(angka) {
@@ -263,8 +265,12 @@ searchInput.addEventListener("input", applyFilters);
 // 🔹 Logout
 window.logout = function() {
   localStorage.removeItem("isLoggedIn");
-  signOut(auth).finally(() => { alert("✅ Berhasil logout!"); window.location.replace("index.html"); });
-}
+  signOut(auth).finally(() => {
+    alert("✅ Berhasil logout!");
+    window.location.replace("/Login/login.html");
+  });
+};
+
 
 // 🔹 Sort
 function sortData(field, asc = true) {

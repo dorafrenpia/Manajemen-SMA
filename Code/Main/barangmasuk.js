@@ -1,6 +1,7 @@
+
 // 🔹 Proteksi login
 if (!localStorage.getItem("isLoggedIn")) {
-  window.location.replace("index.html");
+  window.location.replace("https://manajemen-sma.web.app/Login/login.html");
 }
 
 import { 
@@ -26,12 +27,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
 
-// 🔹 Logout function
+// 🔹 Logout
 window.logout = function() {
   localStorage.removeItem("isLoggedIn");
   signOut(auth).finally(() => {
     alert("✅ Berhasil logout!");
-    window.location.replace("index.html");
+    window.location.replace("/Login/login.html");
   });
 };
 
