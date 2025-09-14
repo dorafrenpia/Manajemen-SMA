@@ -10,30 +10,52 @@ const SCOPES = "https://www.googleapis.com/auth/drive.file";
 let tokenClient;
 window.accessToken = ""; // global supaya bisa diakses di semua file
 
-
-// 🔹 Fungsi update tombol login/logout
+// 🔹 Tombol
 const loginBtn = document.getElementById("loginBtn");
 const sendBtn = document.getElementById("sendBtn");
 
-window.updateLoginButton = function() {
+// 🔹 Fungsi update tombol login/logout
+window.updateLoginButton = function () {
   const isLoggedInDrive = localStorage.getItem("isDriveLoggedIn") === "true";
   if (!loginBtn) return; // aman jika tombol tidak ada di halaman
 
   if (isLoggedInDrive) {
+    // Sudah login
     loginBtn.textContent = "Logout Google Drive";
-    if (sendBtn) sendBtn.disabled = false;
+    loginBtn.style.backgroundColor = "red";
+    loginBtn.style.color = "white";
+    loginBtn.disabled = false;
+
+    if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.style.opacity = "1";
+      sendBtn.style.cursor = "pointer";
+    }
 
     loginBtn.onclick = () => {
       window.accessToken = "";
       localStorage.removeItem("isDriveLoggedIn");
       localStorage.removeItem("driveAccessToken");
-      if (sendBtn) sendBtn.disabled = true;
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.style.opacity = "0.5";
+        sendBtn.style.cursor = "not-allowed";
+      }
       window.updateLoginButton();
       alert("✅ Logout Google Drive berhasil!");
     };
   } else {
+    // Belum login
     loginBtn.textContent = "Login Google Drive";
-    if (sendBtn) sendBtn.disabled = true;
+    loginBtn.style.backgroundColor = "green";
+    loginBtn.style.color = "white";
+    loginBtn.disabled = false;
+
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      sendBtn.style.opacity = "0.5";
+      sendBtn.style.cursor = "not-allowed";
+    }
 
     loginBtn.onclick = () => {
       tokenClient = google.accounts.oauth2.initTokenClient({
@@ -57,7 +79,17 @@ window.updateLoginButton = function() {
 // Ambil token dari localStorage saat halaman load
 if (localStorage.getItem("isDriveLoggedIn") === "true") {
   window.accessToken = localStorage.getItem("driveAccessToken");
-  if (sendBtn) sendBtn.disabled = false;
+  if (sendBtn) {
+    sendBtn.disabled = false;
+    sendBtn.style.opacity = "1";
+    sendBtn.style.cursor = "pointer";
+  }
+} else {
+  if (sendBtn) {
+    sendBtn.disabled = true;
+    sendBtn.style.opacity = "0.5";
+    sendBtn.style.cursor = "not-allowed";
+  }
 }
 
 // Panggil update tombol

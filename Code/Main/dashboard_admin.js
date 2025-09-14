@@ -40,39 +40,55 @@ if (!localStorage.getItem("isLoggedIn")) {
 // 🔹 Format Rupiah
 function formatRupiah(angka) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
-}
-
-// 🔹 Render Tabel
+}// 🔹 Render Tabel
 function renderTable(data) {
-  tableBody.innerHTML = "";
-  if (data.length === 0) {
-    statusEl.textContent = "⚠️ Tidak ada data yang cocok!";
-    return;
-  }
+    tableBody.innerHTML = "";
+    if (data.length === 0) {
+        statusEl.textContent = "⚠️ Tidak ada data yang cocok!";
+        return;
+    }
 
-  data.forEach((item, index) => {
-    const row = document.createElement("tr");
-row.innerHTML = `
-  <td>${index + 1}</td>
-  <td>${item.kodeBarang}</td>
-  <td>${item.namaBarang}</td>
-  <td>${item.jumlahBarang}</td>
-  <td>${formatRupiah(item.hargaBarang)}</td>
-  <td>${item.tanggalBarang || '-'}</td>
-  <td>${item.createdAt?.toDate ? item.createdAt.toDate().toLocaleString("id-ID") : '-'}</td>
-  <td>${item.kategori || '-'}</td>
-  <td>${item.satuan || '-'}</td>
-  <td>${item.jenisDana || '-'}</td>
-  <td>${item.merek || '-'}</td>
-  <td>${item.fotoURL ? `<img src="${item.fotoURL}" alt="Foto" style="width:50px; height:50px; object-fit:cover; border-radius:4px;">` : '-'}</td>
-  <td>${item.keterangan || '-'}</td>
-  <td><button style="font-size:12px;" onclick="editRowPopup(${index})">✏️ Edit</button></td>
-`;
+    data.forEach((item, index) => {
+        const row = document.createElement("tr");
 
-    tableBody.appendChild(row);
-  });
-  statusEl.textContent = `🟢 ${data.length} data ditampilkan`;
+        // Tombol lihat foto untuk semua link
+        let fotoBtns = "-";
+        if (item.fotoLinks && item.fotoLinks.length > 0) {
+            fotoBtns = item.fotoLinks.map(link => {
+                // Ambil ID file dari link Drive
+                const driveId = link.match(/[-\w]{25,}/)?.[0];
+                const directLink = driveId
+                    ? `https://drive.google.com/uc?export=view&id=${driveId}`
+                    : link;
+
+                return `<button style="font-size:12px; margin:2px;" onclick="window.open('${directLink}', '_blank')">📷 Lihat Foto</button>`;
+            }).join(" ");
+        }
+
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.kodeBarang || '-'}</td>
+            <td>${item.namaBarang || '-'}</td>
+            <td>${item.jumlahBarang || '-'}</td>
+            <td>${formatRupiah(item.hargaBarang)}</td>
+            <td>${item.tanggalBarang || '-'}</td>
+            <td>${item.createdAt?.toDate ? item.createdAt.toDate().toLocaleString("id-ID") : '-'}</td>
+            <td>${item.kategori || '-'}</td>
+            <td>${item.satuan || '-'}</td>
+            <td>${item.jenisDana || '-'}</td>
+            <td>${item.merek || '-'}</td>
+            <td>${fotoBtns}</td>
+            <td>${item.keterangan || '-'}</td>
+            <td><button style="font-size:12px;" onclick="editRowPopup(${index})">✏️ Edit</button></td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+
+    statusEl.textContent = `🟢 ${data.length} data ditampilkan`;
 }
+
+
 
 function editRowPopup(index) {
   currentEditIndex = index;

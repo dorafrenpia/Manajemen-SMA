@@ -56,11 +56,52 @@ const kategoriDropdown = document.getElementById("kategoriDropdown");
 const satuanDropdown = document.getElementById("satuanDropdown");
 const danaDropdown = document.getElementById("danaDropdown");
 const keteranganInput = document.getElementById("keteranganInput");
-
 kodeInput.readOnly = true;
-// 🔹 Elemen DOM untuk upload foto
-const fotoInput = document.getElementById("fotoInput"); // pastikan id di HTML sama
-let uploadedFileId = ""; // untuk menyimpan ID file setelah upload
+
+// 🔹 Elemen DOM
+const fotoInput = document.getElementById("fotoInput");
+const previewImage = document.getElementById("previewImage");
+const imageModal = document.getElementById("imageModal");
+const modalImage = document.getElementById("modalImage");
+
+let uploadedFileIds = [];   // untuk menyimpan banyak ID file
+let uploadedFileLinks = []; // untuk menyimpan banyak link file
+fotoInput.addEventListener("change", function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      previewImage.src = e.target.result;
+      previewImage.style.display = "block";
+
+      // ✅ update status jumlah foto
+      updateUploadCount(1);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    previewImage.src = "";
+    previewImage.style.display = "none";
+
+    // ✅ kembali ke status awal
+    updateUploadCount(0);
+  }
+});
+
+// 🔹 Klik gambar kecil → tampilkan modal
+previewImage.addEventListener("click", function() {
+  if (previewImage.src) {
+    modalImage.src = previewImage.src;
+    imageModal.style.display = "flex";
+  }
+});
+
+// 🔹 Klik di luar gambar → tutup modal
+imageModal.addEventListener("click", function(e) {
+  if (e.target === imageModal) {
+    imageModal.style.display = "none";
+  }
+});
+
 
 // 🔹 Google Drive Upload Config
 
@@ -75,102 +116,9 @@ let accessToken = "";
 const loginBtn = document.getElementById("loginBtn");
 const sendBtn = document.getElementById("sendBtn");
 sendBtn.disabled = true; // default disabled sebelum login
-// 🔹 Update tombol login/logout
-// 🔹 Update tombol login/logout
-function updateLoginButton() {
-  const isLoggedInDrive = localStorage.getItem("isDriveLoggedIn") === "true";
-
-  if (isLoggedInDrive) {
-    loginBtn.textContent = "Logout Google Drive";
-    sendBtn.disabled = false;
-
-    // Tombol logout Google Drive
-    loginBtn.onclick = () => {
-      accessToken = "";
-      localStorage.removeItem("isDriveLoggedIn");
-      sendBtn.disabled = true;
-      updateLoginButton();
-      alert("✅ Logout Google Drive berhasil!");
-    };
-  } else {
-    loginBtn.textContent = "Login Google Drive";
-    sendBtn.disabled = true;
-
-    // Tombol login Google Drive
-    loginBtn.onclick = () => {
-      tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: (tokenResponse) => {
-          if (tokenResponse.access_token) {
-            accessToken = tokenResponse.access_token;
-
-            // Simpan status login dan update tombol
-            localStorage.setItem("isDriveLoggedIn", "true");
-            updateLoginButton();
-
-            alert("✅ Login Google Drive berhasil!");
-          }
-        },
-      });
-
-      tokenClient.requestAccessToken();
-    };
-  }
-}
-
-// 🔹 Cek status login Google Drive saat halaman load
-if (localStorage.getItem("isDriveLoggedIn") === "true") {
-  sendBtn.disabled = false; // aktifkan tombol upload
-}
-
-// 🔹 Panggil update button saat halaman siap
-updateLoginButton();
-
-// 🔹 Fungsi logout global (Firebase + Google Drive)
-window.logout = function() {
-  // Hapus status login Firebase
-  localStorage.removeItem("isLoggedIn");
-
-  // Hapus status login Google Drive
-  accessToken = "";
-  localStorage.removeItem("isDriveLoggedIn");
-  sendBtn.disabled = true;
-  updateLoginButton(); // update tombol login/logout Drive
-
-  // Logout dari Firebase
-  signOut(auth).finally(() => {
-    alert("✅ Berhasil logout dari aplikasi & Google Drive!");
-    window.location.replace("/Login/login.html"); // redirect ke login
-  });
-};
 
 
-// 🔹 Saat halaman load, cek status login
-if (localStorage.getItem("isDriveLoggedIn") === "true") {
-  sendBtn.disabled = false; // aktifkan tombol upload
-}
-
-// 🔹 Panggil update button saat halaman siap
-updateLoginButton();
-// 🔹 Tunggu sampai halaman & DOM siap
-loginBtn.onclick = () => {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: (tokenResponse) => {
-      if(tokenResponse.access_token){
-        accessToken = tokenResponse.access_token;
-        sendBtn.disabled = false;
-        localStorage.setItem("isDriveLoggedIn", "true"); // simpan status login
-        updateLoginButton();
-        alert("Login Google Drive berhasil!");
-      }
-    },
-  });
-  tokenClient.requestAccessToken();
-};
-
+// UPLOAD
 sendBtn.onclick = async () => {
   const file = fotoInput.files[0];
   if (!file) return alert("Pilih file dulu");
@@ -194,10 +142,23 @@ sendBtn.onclick = async () => {
         body: form
       }
     );
+
     const result = await response.json();
     if (result.id) {
-      uploadedFileId = result.id;
-      alert("✅ Berhasil upload foto! ID file: " + uploadedFileId);
+      const fileLink = `https://drive.google.com/file/d/${result.id}/view?usp=sharing`;
+
+      // Simpan ke array
+      uploadedFileIds.push(result.id);
+      uploadedFileLinks.push(fileLink);
+
+      // Simpan juga ke localStorage biar aman
+      localStorage.setItem("uploadedFileIds", JSON.stringify(uploadedFileIds));
+      localStorage.setItem("uploadedFileLinks", JSON.stringify(uploadedFileLinks));
+
+      // ✅ Update jumlah upload setelah berhasil
+      updateUploadCount(uploadedFileIds.length);
+
+      alert("✅ Berhasil upload foto! \nLink: " + fileLink);
     } else {
       alert("❌ Gagal upload: " + JSON.stringify(result));
     }
@@ -205,6 +166,7 @@ sendBtn.onclick = async () => {
     alert("❌ Terjadi error: " + err);
   }
 };
+
 
 
 // 🔹 Generate kode unik berdasarkan kategori & tanggal
@@ -280,6 +242,15 @@ kategoriDropdown.addEventListener("change", e => handleDropdownChange(e, "katego
 satuanDropdown.addEventListener("change", e => handleDropdownChange(e, "satuan"));
 danaDropdown.addEventListener("change", e => handleDropdownChange(e, "jenisDana"));
 tanggalInput.addEventListener("change", generateKodeBarang);
+function updateUploadCount() {
+  const uploadInfo = document.getElementById("uploadInfo");
+  if (uploadedFileLinks.length > 0) {
+    uploadInfo.textContent = `📷 ${uploadedFileLinks.length} foto sudah diupload`;
+  } else {
+    uploadInfo.textContent = "📷 Belum ada foto diupload";
+  }
+}
+
 
 // 🔹 Format Rupiah untuk harga
 function formatRupiah(angka) {
@@ -311,7 +282,7 @@ document.getElementById("barangForm").addEventListener("submit", async e => {
   }
 
   try {
-   await addDoc(collection(db, "barangMasuk"), {
+ await addDoc(collection(db, "barangMasuk"), {
   kodeBarang,
   namaBarang,
   merek: merekValue,
@@ -322,11 +293,15 @@ document.getElementById("barangForm").addEventListener("submit", async e => {
   satuan,
   jenisDana,
   keterangan,
-  fotoId: uploadedFileId, // ID file dari Google Drive
+  fotoIds: uploadedFileIds,                       // simpan semua ID
+  fotoLinks: uploadedFileLinks,                   // simpan semua link
   createdAt: new Date()
 });
-uploadedFileId = ""; // reset setelah submit
-
+uploadedFileIds = [];
+uploadedFileLinks = [];
+localStorage.removeItem("uploadedFileIds");
+localStorage.removeItem("uploadedFileLinks");
+updateUploadCount(); // reset tampilan
 
     statusEl.textContent = `🟢 Data tersimpan! Kode: ${kodeBarang}`;
     document.getElementById("barangForm").reset();
