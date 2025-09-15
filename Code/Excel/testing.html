@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Export BarangMasuk ke Google Sheet</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { margin-bottom: 20px; }
+    button { 
+      padding: 10px 20px; 
+      font-size: 16px; 
+      cursor: pointer; 
+      background-color: #3498db; 
+      color: white; 
+      border: none; 
+      border-radius: 5px; 
+      margin-right: 10px;
+    }
+    button:hover { background-color: #2980b9; }
+    #status { margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Export BarangMasuk ke Google Sheet</h1>
+  <button id="exportBtn">Export ke Google Sheet</button>
+  <button id="openSheetBtn" style="display:none;">Buka Google Sheet</button>
+  <div id="status"></div>
+
+  <script>
+    const exportBtn = document.getElementById('exportBtn');
+    const openSheetBtn = document.getElementById('openSheetBtn');
+    const statusEl = document.getElementById('status');
+
+    // 🔹 URL Web App Versi 4
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx03av13XLova-tKM4D68suF7clqYGbspM3LI5PA0nx777NI0R-1Uf_U3DFuCvPW4EF/exec";
+
+    // 🔹 Google Sheet ID tempat export
+    const SHEET_ID = "1OORQVn4dP3BCXM29G87_nGKYBpHzv1vzkPPfZvARlY8";
+
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+
+    exportBtn.addEventListener('click', async () => {
+      try {
+        statusEl.textContent = "⏳ Sedang export, mohon tunggu...";
+        exportBtn.disabled = true;
+        openSheetBtn.style.display = "none";
+
+        const response = await fetch(WEB_APP_URL, { mode: 'no-cors' });
+        // Karena mode no-cors, kita tidak bisa membaca response
+        statusEl.textContent = "✅ Export berhasil!";
+
+        // Tampilkan tombol buka Sheet
+        openSheetBtn.style.display = "inline-block";
+        exportBtn.disabled = false;
+      } catch(err) {
+        console.error(err);
+        statusEl.textContent = "❌ Gagal export! Cek console untuk error.";
+        exportBtn.disabled = false;
+      }
+    });
+
+    openSheetBtn.addEventListener('click', () => {
+      window.open(SHEET_URL, '_blank');
+    });
+  </script>
+</body>
+</html>

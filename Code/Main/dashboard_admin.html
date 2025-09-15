@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin</title>
+  <title>Dashboard Admin - Barang Masuk</title>
   <link rel="stylesheet" href="/Main/dashboard_admin.css">
   <style>
+    body { font-family: Arial, sans-serif; }
     .sort-btn { cursor: pointer; margin-left: 5px; }
+    button { padding: 6px 12px; border-radius: 5px; cursor: pointer; }
+    #exportBtn { background-color: #3498db; color: white; border: none; margin-bottom: 10px; }
+    #exportBtn:hover { background-color: #2980b9; }
   </style>
 </head>
 <body>
@@ -18,10 +22,8 @@
       <nav style="display: flex; gap: 15px; align-items: center;">
         <a href="dashboard_admin.html">Dashboard</a>
         <a href="barangmasuk.html">Barang Masuk</a>
-        <a href="#">Laporan</a>
-        <button onclick="logout()" style="font-weight:  bold;padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
-          Logout
-        </button>
+        <a href="/AddUser/add-nisn.html">Account</a>
+        <button onclick="logout()" style="font-weight: bold; padding:6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
       </nav>
     </div>
   </header>
@@ -31,69 +33,68 @@
       <h2>Dashboard Barang Masuk</h2>
       <div id="status">⏳ Memuat data...</div>
 
-     <!-- 🔹 Tombol Filter -->
+      <!-- 🔹 Tombol Filter & Export -->
+      <div style="margin-bottom:10px;">
+        
+        <button id="exportBtn">Export ke Excel</button>
+      </div>
+<button id="exportSheetBtn">Export ke Google Sheet</button>
+<!-- Tombol baru ini awalnya disembunyikan -->
+<button id="goToSheetBtn" style="display:none; margin-left:10px; margin-top:10px;">Buka Google Sheet</button>
+
 <button id="openFilter" class="filter-btn">Filter</button>
-<!-- 🔹 Popup Modal Filter -->
-<div id="filterModal" class="modal">
-  <div class="modal-content">
-    <span id="closeFilter" class="close">&times;</span>
+      <!-- 🔹 Popup Modal Filter -->
+      <div id="filterModal" class="modal">
+        <div class="modal-content">
+          <span id="closeFilter" class="close">&times;</span>
+          <div class="filter-container">
+            <h3>Filter Data Barang</h3>
+            <label for="searchInput">Cari Barang (Kode / Nama / Merek):</label>
+            <input type="text" id="searchInput" placeholder="Ketik kode, nama, atau merek...">
+            <label for="searchTanggalBarang">Tanggal Barang:</label>
+            <input type="date" id="searchTanggalBarang">
+            <label for="searchTanggalInput">Tanggal Input Sistem:</label>
+            <input type="date" id="searchTanggalInput">
+          </div>
+        </div>
+      </div>
 
-    <div class="filter-container">
-          <h3>Filter Data Barang</h3>
-
-      <label for="searchInput">Cari Barang (Kode / Nama / Merek):</label>
-      <input type="text" id="searchInput" placeholder="Ketik kode, nama, atau merek...">
-
-      <label for="searchTanggalBarang">Tanggal Barang:</label>
-      <input type="date" id="searchTanggalBarang">
-
-      <label for="searchTanggalInput">Tanggal Input Sistem:</label>
-      <input type="date" id="searchTanggalInput">
-    </div>
-
-  </div>
-</div>
-
+      <!-- Tabel Barang -->
       <div class="table-container">
         <table id="barangTable">
-         <thead>
-  <tr>
-    <th>No</th>
-
-    <th>Kode Barang <button id="sortKodeBtn" class="sort-btn">⇅</button></th>
-    
-    <th>Nama Barang <button id="sortNamaBtn" class="sort-btn">⇅</button></th>
-    <th>
-  Merek 
-  <button id="sortMerekBtn" class="sort-btn">⇅</button>
-</th>
-    <th>Jumlah <button id="sortJumlahBtn" class="sort-btn">⇅</button></th>
-    <th>Harga (Rp) <button id="sortHargaBtn" class="sort-btn">⇅</button></th>
-    <th>Tanggal Barang <button id="sortTanggalBtn" class="sort-btn">⇅</button></th>
-    <th>Input Sistem <button id="sortInputBtn" class="sort-btn">⇅</button></th>
-    <th>Kategori
-      <select id="kategoriDropdown">
-        <option value="">-- Pilih kategori --</option>
-        <option value="__tambah__">➕ Tambah kategori baru...</option>
-      </select>
-    </th>
- <th>Satuan
-  <select id="satuanDropdown">
-    <option value="">-- Pilih satuan --</option>
-  </select>
-</th>
-<th>Jenis Dana
-  <select id="jenisDanaDropdown">
-    <option value="">-- Pilih jenis dana --</option>
-  </select>
-</th>
-
-
-<th>Foto</th>
-    <th>Keterangan</th>
-  </tr>
-</thead>
-
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Kode Barang <button id="sortKodeBtn" class="sort-btn">⇅</button></th>
+              <th>Nama Barang <button id="sortNamaBtn" class="sort-btn">⇅</button></th>
+              <th>Merek <button id="sortMerekBtn" class="sort-btn">⇅</button></th>
+              <th>Jumlah <button id="sortJumlahBtn" class="sort-btn">⇅</button></th>
+              <th>Tanggal Barang <button id="sortTanggalBtn" class="sort-btn">⇅</button></th>
+              <th>Input Sistem <button id="sortInputBtn" class="sort-btn">⇅</button></th>
+              
+              
+              
+              
+              <th>Kategori
+                <select id="kategoriDropdown">
+                  <option value="">-- Pilih kategori --</option>
+                  <option value="__tambah__">➕ Tambah kategori baru...</option>
+                </select>
+              </th>
+              <th>Satuan
+                <select id="satuanDropdown">
+                  <option value="">-- Pilih satuan --</option>
+                </select>
+              </th>
+              <th>Jenis Dana
+                <select id="jenisDanaDropdown">
+                  <option value="">-- Pilih jenis dana --</option>
+                </select>
+              </th>
+              <th>Foto</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
           <tbody></tbody>
         </table>
       </div>
@@ -104,62 +105,192 @@
     <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>
   </footer>
 
-
-
-<!-- Modal Edit -->
-<div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
-  <div style="background:white; padding:20px; border-radius:8px; width:400px; position:relative;">
-    <h3>Edit Barang</h3>
-    <form id="editForm">
-      <div><label>Kode Barang:</label> <span id="editKode"></span></div>
-      <div><label>Nama Barang:</label> <input type="text" id="editNama" required></div>
-      <div><label>Merek:</label> <input type="text" id="editMerek" required></div>
-      <div><label>Jumlah:</label> <input type="number" id="editJumlah" required></div>
-      <div><label>Harga (Rp):</label> <input type="number" id="editHarga" required></div>
-      <div><label>Tanggal:</label> <input type="date" id="editTanggal"></div>
-      <div><label>Kategori:</label> <input type="text" id="editKategori"></div>
-      <div><label>Satuan:</label> <input type="text" id="editSatuan"></div>
-      <div><label>Jenis Dana:</label> <input type="text" id="editDana"></div>
-      <div><label>Keterangan:</label> <input type="text" id="editKeterangan"></div>
-      
-      <div style="margin-top:10px; text-align:right;">
-        <button type="button" id="cancelEdit">❌ Cancel</button>
-        <button type="submit">✔️ Save</button>
-      </div>
-    </form>
+  <!-- Modal Edit -->
+  <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    <div style="background:white; padding:20px; border-radius:8px; width:400px; position:relative;">
+      <h3>Edit Barang</h3>
+      <form id="editForm">
+        <div><label>Kode Barang:</label> <span id="editKode"></span></div>
+        <div><label>Nama Barang:</label> <input type="text" id="editNama" required></div>
+        <div><label>Merek:</label> <input type="text" id="editMerek" required></div>
+        <div><label>Jumlah:</label> <input type="number" id="editJumlah" required></div>
+        
+        <div><label>Tanggal:</label> <input type="date" id="editTanggal"></div>
+        <div><label>Kategori:</label> <input type="text" id="editKategori"></div>
+        <div><label>Satuan:</label> <input type="text" id="editSatuan"></div>
+        <div><label>Jenis Dana:</label> <input type="text" id="editDana"></div>
+        <div><label>Keterangan:</label> <input type="text" id="editKeterangan"></div>
+        <div style="margin-top:10px; text-align:right;">
+          <button type="button" id="cancelEdit">❌ Cancel</button>
+          <button type="submit">✔️ Save</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
-<script type="module" src="/Main/dashboard_admin.js"></script>
-<script type="module" src="/js/firebase.js"></script>
-<script type="module" src="/js/drive.js"></script>
-<script type="module" src="/js/app.js"></script>
-<script type="module" src="/js/proteksi.js"></script>
+  <!-- Modal Preview Foto -->
+  <div id="imageModal" style="display:none; position:fixed; z-index:9999; 
+      left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); 
+      justify-content:center; align-items:center;">
+    <span onclick="closeImageModal()" 
+          style="position:absolute; top:20px; right:30px; color:white; font-size:30px; cursor:pointer;">&times;</span>
+    <img id="modalImage" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
+  </div>
 
-<!-- Modal Preview Foto -->
-<div id="imageModal" style="display:none; position:fixed; z-index:9999; 
-    left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); 
-    justify-content:center; align-items:center;">
-  <span onclick="closeImageModal()" 
-        style="position:absolute; top:20px; right:30px; color:white; font-size:30px; cursor:pointer;">&times;</span>
-  <img id="modalImage" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
-</div>
-<script>const modal = document.getElementById("filterModal");
-const btn = document.getElementById("openFilter");
-const span = document.getElementById("closeFilter");
+  <!-- ExcelJS UMD -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 
-btn.onclick = () => modal.style.display = "block";
-span.onclick = () => modal.style.display = "none";
-window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+  <!-- Firebase v10 & Export Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
-// 🔹 Event listener untuk semua input filter → otomatis filter
-["searchInput", "searchTanggalBarang", "searchTanggalInput"].forEach(id => {
-  document.getElementById(id).addEventListener("input", applyFilters);
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAVsG_cBB_Ksbk4oqkXTH6oTlNKl-p-bU",
+      authDomain: "manajemen-sma.firebaseapp.com",
+      projectId: "manajemen-sma",
+      storageBucket: "manajemen-sma.appspot.com",
+      messagingSenderId: "1008287671477",
+      appId: "1:1008287671477:web:7829d82b3da953d2598afc",
+      measurementId: "G-ZSFSXW3C2C"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Export Excel
+document.getElementById('exportBtn').addEventListener('click', async () => {
+  try {
+    const snapshot = await getDocs(collection(db, "barangMasuk"));
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('BarangMasuk');
+
+    worksheet.columns = [
+      { header: 'No', key: 'no', width: 5 },
+      { header: 'ID', key: 'id', width: 25 },
+      { header: 'Kode', key: 'kode', width: 20 },
+      { header: 'Nama', key: 'nama', width: 20 },
+      { header: 'Merek', key: 'merek', width: 15 },
+      { header: 'Kategori', key: 'kategori', width: 15 },
+      { header: 'Jumlah', key: 'jumlah', width: 10 },
+      { header: 'Satuan', key: 'satuan', width: 10 },
+      
+      { header: 'JenisDana', key: 'jenisDana', width: 15 },
+      { header: 'TanggalBarang', key: 'tanggal', width: 15 },
+      { header: 'Keterangan', key: 'keterangan', width: 20 },
+      { header: 'Foto1', key: 'foto', width: 25 }
+    ];
+
+    // Styling header
+    worksheet.getRow(1).eachCell(cell => {
+      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.fill = { type: 'pattern', pattern:'solid', fgColor:{argb:'FF3498DB'} };
+      cell.alignment = { horizontal: 'center' };
+      cell.border = { top:{style:'thin'}, bottom:{style:'thin'}, left:{style:'thin'}, right:{style:'thin'} };
+    });
+// Fungsi ubah link Google Drive jadi direct download
+function driveDirectLink(url) {
+  if (!url) return '';
+  const match = url.match(/\/d\/(.*?)\//);
+  if (match && match[1]) return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+  return url;
+}
+
+let no = 1;
+snapshot.forEach(doc => {
+  const d = doc.data();
+  const fotoLink = d.fotoLinks?.[0] || '';
+
+  // Tambahkan row tanpa foto dulu
+  const row = worksheet.addRow({
+    no: no++,
+    id: doc.id,
+    kode: d.kodeBarang,
+    nama: d.namaBarang,
+    merek: d.merek,
+    kategori: d.kategori,
+    jumlah: d.jumlahBarang,
+    satuan: d.satuan,
+    
+    jenisDana: d.jenisDana,
+    tanggal: d.tanggalBarang,
+    keterangan: d.keterangan
+  });
+
+  // Tambahkan direct link untuk kolom Foto (kolom ke-13)
+  if(fotoLink) {
+    const directLink = driveDirectLink(fotoLink);
+    row.getCell(13).value = directLink;
+    row.getCell(13).font = { color: { argb: 'FF0000FF' }, underline: true }; // biru & underline
+  } else {
+    row.getCell(13).value = "-";
+  }
 });
 
+    // Format harga jadi Rupiah
+    worksheet.getColumn('harga').numFmt = '"Rp"#,##0.00;[Red]\-"Rp"#,##0.00';
 
+    // Export Excel
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/octet-stream' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'BarangMasuk.xlsx';
+    link.click();
 
-</script>
+    alert('Export berhasil! Excel rapi dan link foto muncul.');
+  } catch(err) {
+    console.error(err);
+    alert('Gagal export Excel!');
+  }
+});
+const exportSheetBtn = document.getElementById('exportSheetBtn');
+const goToSheetBtn = document.getElementById('goToSheetBtn');
+
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx03av13XLova-tKM4D68suF7clqYGbspM3LI5PA0nx777NI0R-1Uf_U3DFuCvPW4EF/exec";
+const SHEET_ID = "1OORQVn4dP3BCXM29G87_nGKYBpHzv1vzkPPfZvARlY8";
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}`;
+
+exportSheetBtn.addEventListener('click', async () => {
+  try {
+    exportSheetBtn.disabled = true;
+    await fetch(WEB_APP_URL, { mode: 'no-cors' });
+    alert('✅ Export ke Google Sheet berhasil!');
+    exportSheetBtn.disabled = false;
+
+    // Tampilkan tombol untuk pergi ke Google Sheet
+    goToSheetBtn.style.display = 'inline-block';
+  } catch(err) {
+    console.error(err);
+    alert('❌ Gagal export ke Google Sheet!');
+    exportSheetBtn.disabled = false;
+  }
+});
+
+// Tombol baru untuk buka Sheet
+goToSheetBtn.addEventListener('click', () => {
+  window.open(SHEET_URL, '_blank');
+});
+
+    // Filter Modal
+    const modal = document.getElementById("filterModal");
+    const btn = document.getElementById("openFilter");
+    const span = document.getElementById("closeFilter");
+    btn.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+
+    ["searchInput","searchTanggalBarang","searchTanggalInput"].forEach(id => {
+      document.getElementById(id).addEventListener("input", applyFilters);
+    });
+
+  </script>
+
+  <!-- Modul JS Lain -->
+  <script type="module" src="/Main/dashboard_admin.js"></script>
+  <script type="module" src="/js/firebase.js"></script>
+  <script type="module" src="/js/drive.js"></script>
+  <script type="module" src="/js/app.js"></script>
+  <script type="module" src="/js/proteksi.js"></script>
 
 </body>
 </html>

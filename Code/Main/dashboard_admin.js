@@ -97,14 +97,16 @@ function renderTable(data) {
       <td>${start + index + 1}</td>
       <td>${item.kodeBarang || '-'}</td>
       <td>${item.namaBarang || '-'}</td>
+      <td>${item.merek || '-'}</td>
       <td>${item.jumlahBarang || '-'}</td>
-      <td>${formatRupiah(item.hargaBarang)}</td>
+      
       <td>${item.tanggalBarang || '-'}</td>
+      
       <td>${item.createdAt?.toDate ? item.createdAt.toDate().toLocaleString("id-ID") : '-'}</td>
       <td>${item.kategori || '-'}</td>
       <td>${item.satuan || '-'}</td>
       <td>${item.jenisDana || '-'}</td>
-      <td>${item.merek || '-'}</td>
+      
       <td>${fotoBtns}</td>
       <td>${item.keterangan || '-'}</td>
       <td><button class="edit-btn" onclick="editRowPopup(${start + index})">✏️ Edit</button></td>
@@ -165,7 +167,7 @@ function editRowPopup(index) {
   document.getElementById("editNama").value = item.namaBarang || '';
   document.getElementById("editMerek").value = item.merek || '';
   document.getElementById("editJumlah").value = item.jumlahBarang || '';
-  document.getElementById("editHarga").value = item.hargaBarang || '';
+  
   document.getElementById("editTanggal").value = item.tanggalBarang || '';
   document.getElementById("editKategori").value = item.kategori || '';
   document.getElementById("editSatuan").value = item.satuan || '';
@@ -193,7 +195,7 @@ editForm.onsubmit = async (e) => {
     namaBarang: document.getElementById("editNama").value,
     merek: document.getElementById("editMerek").value, // <--- tambahkan ini
     jumlahBarang: Number(document.getElementById("editJumlah").value),
-    hargaBarang: Number(document.getElementById("editHarga").value),
+    
     tanggalBarang: document.getElementById("editTanggal").value,
     kategori: document.getElementById("editKategori").value,
     satuan: document.getElementById("editSatuan").value,
@@ -354,15 +356,18 @@ function sortData(field, asc = true) {
   applyFilters();
 }
 
-let kodeAsc=true, namaAsc=true, jumlahAsc=true, hargaAsc=true, tanggalAsc=true, inputAsc=true;
+let kodeAsc=true, namaAsc=true, jumlahAsc=true,  tanggalAsc=true, inputAsc=true;
 let merekAsc = true;
 document.getElementById("sortKodeBtn").addEventListener("click", ()=>{ sortData("kodeBarang", kodeAsc); kodeAsc=!kodeAsc; });
+
+
 document.getElementById("sortNamaBtn").addEventListener("click", ()=>{ sortData("namaBarang", namaAsc); namaAsc=!namaAsc; });
+document.getElementById("sortMerekBtn").addEventListener("click", () => {
 document.getElementById("sortJumlahBtn").addEventListener("click", ()=>{ sortData("jumlahBarang", jumlahAsc); jumlahAsc=!jumlahAsc; });
-document.getElementById("sortHargaBtn").addEventListener("click", ()=>{ sortData("hargaBarang", hargaAsc); hargaAsc=!hargaAsc; });
+
 document.getElementById("sortTanggalBtn").addEventListener("click", ()=>{ sortData("tanggalBarang", tanggalAsc); tanggalAsc=!tanggalAsc; });
 document.getElementById("sortInputBtn").addEventListener("click", ()=>{ sortData("createdAt", inputAsc); inputAsc=!inputAsc; });
-document.getElementById("sortMerekBtn").addEventListener("click", () => {
+
   sortData("merek", merekAsc);
   merekAsc = !merekAsc;
 });

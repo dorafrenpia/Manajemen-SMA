@@ -1,21 +1,67 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tambah NISN</title>
-  <link rel="stylesheet" href="add-nisn.css">
-</head>
-<body>
-  <div class="container">
-    <h2>Tambah NISN Baru</h2>
-    <input type="text" id="nisnInput" placeholder="Masukkan NISN">
-    <button id="addBtn">Tambah NISN</button>
-  </div>
+  <!DOCTYPE html>
+  <html lang="id">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah NISN</title>
+    <link rel="stylesheet" href="add-nisn.css">
+  </head>
+  <body>
+    
+    <div class="container">
+      <h2>Tambah NISN Baru</h2>
 
-  <!-- Popup -->
-  <div id="popup" class="popup"></div>
+      <!-- Input NISN -->
+      <input type="text" id="nisnInput" placeholder="Masukkan NISN">
+      <button id="addBtn">Tambah NISN</button>
+      
+      <!-- Link kembali -->
+<div class="link-container">
+  <span class="link-text" onclick="window.location.href='/Main/dashboard_admin.html'">
+    Kembali ke Dashboard
+  </span>
+</div>
 
-  <script type="module" src="add-nisn.js"></script>
-</body>
-</html>
+      <div><br><br>
+
+      <!-- Info data (akan diisi JS) -->
+      <div id="infoData"></div>
+
+      <!-- Search (akan diisi JS) -->
+      <div id="searchContainer"></div>
+
+      <!-- Table NISN -->
+      <div class="table-container">
+        <table id="nisnTable">
+        <thead>
+    <tr>
+      <th>No <button class="sort-btn small-sort" data-column="no">⇅</button></th>
+  <th>NISN <button class="sort-btn small-sort" data-column="nisn">⇅</button></th>
+  <th>
+    <div class="th-content">
+      Nama Pengguna
+      <button class="sort-btn" data-column="nama">⇅</button>
+    </div>
+  </th>
+
+  <th>Email <button class="sort-btn small-sort" data-column="email">⇅</button></th>
+  <th>Telepon <button class="sort-btn small-sort" data-column="telepon">⇅</button></th>
+  <th>STATUS <button class="sort-btn small-sort" data-column="status">⇅</button></th>
+
+      <th>Aksi</th>
+    </tr>
+  </thead>
+
+          <tbody>
+            <!-- Data akan diisi lewat JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Popup -->
+    <div id="popup" class="popup"></div>
+
+    <script type="module" src="add-nisn.js"></script>
+  </body>
+  </html>

@@ -50,12 +50,13 @@ const kodeInput = document.getElementById("kodeBarang");
 const namaInput = document.getElementById("namaBarang");
 
 const jumlahInput = document.getElementById("jumlahBarang");
-const hargaInput = document.getElementById("hargaBarang");
+
 const tanggalInput = document.getElementById("tanggalBarang");
 const kategoriDropdown = document.getElementById("kategoriDropdown");
 const satuanDropdown = document.getElementById("satuanDropdown");
 const danaDropdown = document.getElementById("danaDropdown");
-const merekDropdown = document.getElementById("merekDropdown");
+const merekInput = document.getElementById("merekInput");
+
 
 const keteranganInput = document.getElementById("keteranganInput");
 kodeInput.readOnly = true;
@@ -255,7 +256,7 @@ async function handleDropdownChange(e, namaField) {
 
 // 🔹 Event listener dropdown & tanggal
 kategoriDropdown.addEventListener("change", e => handleDropdownChange(e, "kategori"));
-merekDropdown.addEventListener("change", e => handleDropdownChange(e, "merek"));
+
 
 satuanDropdown.addEventListener("change", e => handleDropdownChange(e, "satuan"));
 danaDropdown.addEventListener("change", e => handleDropdownChange(e, "jenisDana"));
@@ -269,15 +270,6 @@ function updateUploadCount() {
   }
 }
 
-
-// 🔹 Format Rupiah untuk harga
-function formatRupiah(angka) {
-  return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
-}
-hargaInput.addEventListener("input", e => {
-  let value = e.target.value.replace(/\D/g, "");
-  e.target.value = value ? formatRupiah(value) : "";
-});
 document.addEventListener("DOMContentLoaded", () => {
   const statusEl = document.getElementById("status");
   
@@ -286,20 +278,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const kodeBarang = kodeInput.value.trim();
     const namaBarang = namaInput.value.trim();
-    const merekValue = merekDropdown.value;
+    const merekValue = merekInput.value.trim();
+
 
     const jumlahBarang = parseInt(jumlahInput.value);
     const tanggalBarang = tanggalInput.value;
-    const hargaBarang = parseInt(hargaInput.value.replace(/\D/g, ""));
+    
     const kategori = kategoriDropdown.value;
     const satuan = satuanDropdown.value;
     const jenisDana = danaDropdown.value;
     const keterangan = keteranganInput.value.trim();
 
-    if (!kodeBarang || !namaBarang || !merekValue || !tanggalBarang || !kategori || !satuan || !jenisDana || isNaN(jumlahBarang) || isNaN(hargaBarang)) {
+    if (!kodeBarang || !namaBarang || !merekValue || !tanggalBarang || !kategori || !satuan || !jenisDana || isNaN(jumlahBarang)) {
       statusEl.textContent = "❌ Semua field harus diisi dengan benar!";
       return;
     }
+if (!merekValue) {
+  statusEl.textContent = "❌ Merek harus diisi!";
+  return;
+}
 
     try {
       await addDoc(collection(db, "barangMasuk"), {
@@ -308,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
         merek: merekValue,
         jumlahBarang,
         tanggalBarang,
-        hargaBarang,
+        
         kategori,
         satuan,
         jenisDana,
@@ -359,6 +356,6 @@ setTimeout(() => {
 // 🔹 Load awal dropdown
 loadDropdown("kategori", kategoriDropdown);
 loadDropdown("satuan", satuanDropdown);
-loadDropdown("merek", merekDropdown);
+
 
 loadDropdown("jenisDana", danaDropdown);
