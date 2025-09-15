@@ -31,8 +31,28 @@
       <h2>Dashboard Barang Masuk</h2>
       <div id="status">⏳ Memuat data...</div>
 
-      <label for="searchInput">Cari Barang (Kode / Nama):</label>
-      <input type="text" id="searchInput" placeholder="Ketik kode atau nama...">
+     <!-- 🔹 Tombol Filter -->
+<button id="openFilter" class="filter-btn">Filter</button>
+<!-- 🔹 Popup Modal Filter -->
+<div id="filterModal" class="modal">
+  <div class="modal-content">
+    <span id="closeFilter" class="close">&times;</span>
+
+    <div class="filter-container">
+          <h3>Filter Data Barang</h3>
+
+      <label for="searchInput">Cari Barang (Kode / Nama / Merek):</label>
+      <input type="text" id="searchInput" placeholder="Ketik kode, nama, atau merek...">
+
+      <label for="searchTanggalBarang">Tanggal Barang:</label>
+      <input type="date" id="searchTanggalBarang">
+
+      <label for="searchTanggalInput">Tanggal Input Sistem:</label>
+      <input type="date" id="searchTanggalInput">
+    </div>
+
+  </div>
+</div>
 
       <div class="table-container">
         <table id="barangTable">
@@ -41,7 +61,12 @@
     <th>No</th>
 
     <th>Kode Barang <button id="sortKodeBtn" class="sort-btn">⇅</button></th>
+    
     <th>Nama Barang <button id="sortNamaBtn" class="sort-btn">⇅</button></th>
+    <th>
+  Merek 
+  <button id="sortMerekBtn" class="sort-btn">⇅</button>
+</th>
     <th>Jumlah <button id="sortJumlahBtn" class="sort-btn">⇅</button></th>
     <th>Harga (Rp) <button id="sortHargaBtn" class="sort-btn">⇅</button></th>
     <th>Tanggal Barang <button id="sortTanggalBtn" class="sort-btn">⇅</button></th>
@@ -62,7 +87,7 @@
     <option value="">-- Pilih jenis dana --</option>
   </select>
 </th>
-<th>Merek</th>
+
 
 <th>Foto</th>
     <th>Keterangan</th>
@@ -96,10 +121,7 @@
       <div><label>Satuan:</label> <input type="text" id="editSatuan"></div>
       <div><label>Jenis Dana:</label> <input type="text" id="editDana"></div>
       <div><label>Keterangan:</label> <input type="text" id="editKeterangan"></div>
-      <div><label>Foto (opsional):</label> 
-        <input type="file" id="editFoto" accept="image/*">
-        <div id="editFotoPreview" style="margin-top:10px;"></div>
-      </div>
+      
       <div style="margin-top:10px; text-align:right;">
         <button type="button" id="cancelEdit">❌ Cancel</button>
         <button type="submit">✔️ Save</button>
@@ -122,7 +144,22 @@
         style="position:absolute; top:20px; right:30px; color:white; font-size:30px; cursor:pointer;">&times;</span>
   <img id="modalImage" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
 </div>
+<script>const modal = document.getElementById("filterModal");
+const btn = document.getElementById("openFilter");
+const span = document.getElementById("closeFilter");
 
+btn.onclick = () => modal.style.display = "block";
+span.onclick = () => modal.style.display = "none";
+window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+
+// 🔹 Event listener untuk semua input filter → otomatis filter
+["searchInput", "searchTanggalBarang", "searchTanggalInput"].forEach(id => {
+  document.getElementById(id).addEventListener("input", applyFilters);
+});
+
+
+
+</script>
 
 </body>
 </html>

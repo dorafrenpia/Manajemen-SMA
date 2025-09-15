@@ -48,13 +48,15 @@ window.logout = function() {
 const statusEl = document.getElementById("status");
 const kodeInput = document.getElementById("kodeBarang");
 const namaInput = document.getElementById("namaBarang");
-const merekInput = document.getElementById("merekInput");
+
 const jumlahInput = document.getElementById("jumlahBarang");
 const hargaInput = document.getElementById("hargaBarang");
 const tanggalInput = document.getElementById("tanggalBarang");
 const kategoriDropdown = document.getElementById("kategoriDropdown");
 const satuanDropdown = document.getElementById("satuanDropdown");
 const danaDropdown = document.getElementById("danaDropdown");
+const merekDropdown = document.getElementById("merekDropdown");
+
 const keteranganInput = document.getElementById("keteranganInput");
 kodeInput.readOnly = true;
 
@@ -167,15 +169,22 @@ sendBtn.onclick = async () => {
   }
 };
 
-
-
-// 🔹 Generate kode unik berdasarkan kategori & tanggal
+// Generate kode
 async function generateKodeBarang() {
   const kategori = kategoriDropdown.value;
+  const jenisDana = danaDropdown.value;  // ambil dari danaDropdown
   const tanggal = tanggalInput.value;
-  if (!kategori || !tanggal) { kodeInput.value = ""; return; }
 
-  const tanggalStr = tanggal.replace(/-/g, ""); // YYYYMMDD
+  if (!kategori || !tanggal || !jenisDana) {
+    kodeInput.value = "";
+    return;
+  }
+
+  // ambil huruf pertama + terakhir dari jenis dana
+  const jdUpper = (jenisDana.charAt(0) + jenisDana.charAt(jenisDana.length - 1)).toUpperCase();
+  const tanggalStr = tanggal.replace(/-/g, "");
+
+  // Query Firestore
   const q = query(
     collection(db, "barangMasuk"),
     where("kategori", "==", kategori),
@@ -183,8 +192,15 @@ async function generateKodeBarang() {
   );
   const snapshot = await getDocs(q);
   const urutan = snapshot.size + 1;
-  kodeInput.value = `${kategori.toUpperCase()}-${tanggalStr}-${urutan}`;
+
+  // Set hasil
+  kodeInput.value = `${kategori.toUpperCase()}-${jdUpper}-${tanggalStr}-${urutan}`;
 }
+
+// Pasang event listener
+kategoriDropdown.addEventListener("change", generateKodeBarang);
+danaDropdown.addEventListener("change", generateKodeBarang);
+tanggalInput.addEventListener("change", generateKodeBarang);
 
 // 🔹 Cek koneksi Firestore
 async function cekKoneksi() {
@@ -239,6 +255,8 @@ async function handleDropdownChange(e, namaField) {
 
 // 🔹 Event listener dropdown & tanggal
 kategoriDropdown.addEventListener("change", e => handleDropdownChange(e, "kategori"));
+merekDropdown.addEventListener("change", e => handleDropdownChange(e, "merek"));
+
 satuanDropdown.addEventListener("change", e => handleDropdownChange(e, "satuan"));
 danaDropdown.addEventListener("change", e => handleDropdownChange(e, "jenisDana"));
 tanggalInput.addEventListener("change", generateKodeBarang);
@@ -260,59 +278,87 @@ hargaInput.addEventListener("input", e => {
   let value = e.target.value.replace(/\D/g, "");
   e.target.value = value ? formatRupiah(value) : "";
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const statusEl = document.getElementById("status");
+  
+  document.getElementById("barangForm").addEventListener("submit", async e => {
+    e.preventDefault();
 
-// 🔹 Submit form utama
-document.getElementById("barangForm").addEventListener("submit", async e => {
-  e.preventDefault();
+    const kodeBarang = kodeInput.value.trim();
+    const namaBarang = namaInput.value.trim();
+    const merekValue = merekDropdown.value;
 
-  const kodeBarang = kodeInput.value.trim();
-  const namaBarang = namaInput.value.trim();
-  const merekValue = merekInput.value.trim();
-  const jumlahBarang = parseInt(jumlahInput.value);
-  const tanggalBarang = tanggalInput.value;
-  const hargaBarang = parseInt(hargaInput.value.replace(/\D/g, ""));
-  const kategori = kategoriDropdown.value;
-  const satuan = satuanDropdown.value;
-  const jenisDana = danaDropdown.value;
-  const keterangan = keteranganInput.value.trim();
+    const jumlahBarang = parseInt(jumlahInput.value);
+    const tanggalBarang = tanggalInput.value;
+    const hargaBarang = parseInt(hargaInput.value.replace(/\D/g, ""));
+    const kategori = kategoriDropdown.value;
+    const satuan = satuanDropdown.value;
+    const jenisDana = danaDropdown.value;
+    const keterangan = keteranganInput.value.trim();
 
-  if (!kodeBarang || !namaBarang || !merekValue || !tanggalBarang || !kategori || !satuan || !jenisDana || isNaN(jumlahBarang) || isNaN(hargaBarang)) {
-    statusEl.textContent = "❌ Semua field harus diisi dengan benar!";
-    return;
+    if (!kodeBarang || !namaBarang || !merekValue || !tanggalBarang || !kategori || !satuan || !jenisDana || isNaN(jumlahBarang) || isNaN(hargaBarang)) {
+      statusEl.textContent = "❌ Semua field harus diisi dengan benar!";
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "barangMasuk"), {
+        kodeBarang,
+        namaBarang,
+        merek: merekValue,
+        jumlahBarang,
+        tanggalBarang,
+        hargaBarang,
+        kategori,
+        satuan,
+        jenisDana,
+        keterangan,
+        fotoIds: uploadedFileIds,
+        fotoLinks: uploadedFileLinks,
+        createdAt: new Date()
+      });
+
+      uploadedFileIds = [];
+      uploadedFileLinks = [];
+      localStorage.removeItem("uploadedFileIds");
+      localStorage.removeItem("uploadedFileLinks");
+      updateUploadCount();
+
+ // Simpan teks default
+const defaultStatusText = statusEl.textContent;
+
+// Tampilkan pesan sementara di statusEl
+statusEl.textContent = `🟢 Data tersimpan! Kode: ${kodeBarang}`;
+
+// Kembalikan ke status koneksi Firestore setelah 3 detik
+setTimeout(() => {
+  cekKoneksi(); // panggil ulang untuk update status koneksi
+}, 3000);
+      
+      // Tampilkan popup
+      showPopup(`🟢 Data tersimpan! Kode: ${kodeBarang}`);
+
+      document.getElementById("barangForm").reset();
+      kodeInput.value = "";
+
+    } catch (err) {
+      console.error("❌ Error menyimpan data:", err);
+      statusEl.textContent = `❌ Gagal menyimpan: ${err.message}`;
+    }
+  });
+
+  function showPopup(message) {
+    const popup = document.getElementById("popup");
+    popup.textContent = message;
+    popup.classList.add("show");
+    setTimeout(() => popup.classList.remove("show"), 3000);
   }
-
-  try {
- await addDoc(collection(db, "barangMasuk"), {
-  kodeBarang,
-  namaBarang,
-  merek: merekValue,
-  jumlahBarang,
-  tanggalBarang,
-  hargaBarang,
-  kategori,
-  satuan,
-  jenisDana,
-  keterangan,
-  fotoIds: uploadedFileIds,                       // simpan semua ID
-  fotoLinks: uploadedFileLinks,                   // simpan semua link
-  createdAt: new Date()
 });
-uploadedFileIds = [];
-uploadedFileLinks = [];
-localStorage.removeItem("uploadedFileIds");
-localStorage.removeItem("uploadedFileLinks");
-updateUploadCount(); // reset tampilan
 
-    statusEl.textContent = `🟢 Data tersimpan! Kode: ${kodeBarang}`;
-    document.getElementById("barangForm").reset();
-    kodeInput.value = "";
-  } catch (err) {
-    console.error("❌ Error menyimpan data:", err);
-    statusEl.textContent = `❌ Gagal menyimpan: ${err.message}`;
-  }
-});
 
 // 🔹 Load awal dropdown
 loadDropdown("kategori", kategoriDropdown);
 loadDropdown("satuan", satuanDropdown);
+loadDropdown("merek", merekDropdown);
+
 loadDropdown("jenisDana", danaDropdown);

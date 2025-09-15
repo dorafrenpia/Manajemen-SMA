@@ -6,7 +6,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 import { 
   collection, 
-  addDoc 
+  addDoc, 
+  query, 
+  where, 
+  getDocs 
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 // Ambil elemen form
@@ -41,6 +44,16 @@ registerForm.addEventListener("submit", async (e) => {
     const methods = await fetchSignInMethodsForEmail(auth, email);
     if (methods.length > 0) {
       statusMsg.textContent = "❌ Email sudah digunakan!";
+      statusMsg.style.color = "red";
+      return;
+    }
+
+    // Cek apakah NISN sudah terdaftar
+    const q = query(collection(db, "users"), where("nisn", "==", nisn));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      statusMsg.textContent = "❌ NISN sudah terdaftar!";
       statusMsg.style.color = "red";
       return;
     }

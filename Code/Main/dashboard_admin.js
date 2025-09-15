@@ -41,52 +41,119 @@ if (!localStorage.getItem("isLoggedIn")) {
 function formatRupiah(angka) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
 }// 🔹 Render Tabel
+// 🔹 Buat teks refresh sekali saja (selalu tampil di atas statusEl)
+function setupRefreshNote() {
+  let refreshContainer = document.getElementById("refresh-container");
+  if (!refreshContainer) {
+    refreshContainer = document.createElement("div");
+    refreshContainer.id = "refresh-container";
+    refreshContainer.innerHTML = `
+      <span id="refresh-note">
+        ⏳ Jika lebih dari 5 detik data belum muncul, tekan 
+        <span class="refresh-link" onclick="location.reload()">refresh</span>
+      </span>
+    `;
+    statusEl.parentElement.insertBefore(refreshContainer, statusEl);
+  }
+}
+
+// panggil sekali saat halaman load
+setupRefreshNote();
+// 🔹 State
+
+let currentPage = 1;
+const pageSize = 10;
+
+// 🔹 Render tabel dengan pagination
 function renderTable(data) {
-    tableBody.innerHTML = "";
-    if (data.length === 0) {
-        statusEl.textContent = "⚠️ Tidak ada data yang cocok!";
-        return;
+  tableBody.innerHTML = "";
+
+  if (data.length === 0) {
+    statusEl.textContent = "⚠️ Tidak ada data yang cocok!";
+    return;
+  }
+
+  // Hitung indeks data berdasarkan page
+  const start = (currentPage - 1) * pageSize;
+  const end = start + pageSize;
+  const paginated = data.slice(start, end);
+
+  paginated.forEach((item, index) => {
+    const row = document.createElement("tr");
+
+    let fotoBtns = "-";
+    if (item.fotoLinks && item.fotoLinks.length > 0) {
+      fotoBtns = item.fotoLinks.map(link => {
+        const driveId = link.match(/[-\w]{25,}/)?.[0];
+        const directLink = driveId
+          ? `https://drive.google.com/uc?export=view&id=${driveId}`
+          : link;
+
+        return `<button class="foto-btn" onclick="window.open('${directLink}', '_blank')">📷 Lihat Foto</button>`;
+      }).join(" ");
     }
 
-    data.forEach((item, index) => {
-        const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${start + index + 1}</td>
+      <td>${item.kodeBarang || '-'}</td>
+      <td>${item.namaBarang || '-'}</td>
+      <td>${item.jumlahBarang || '-'}</td>
+      <td>${formatRupiah(item.hargaBarang)}</td>
+      <td>${item.tanggalBarang || '-'}</td>
+      <td>${item.createdAt?.toDate ? item.createdAt.toDate().toLocaleString("id-ID") : '-'}</td>
+      <td>${item.kategori || '-'}</td>
+      <td>${item.satuan || '-'}</td>
+      <td>${item.jenisDana || '-'}</td>
+      <td>${item.merek || '-'}</td>
+      <td>${fotoBtns}</td>
+      <td>${item.keterangan || '-'}</td>
+      <td><button class="edit-btn" onclick="editRowPopup(${start + index})">✏️ Edit</button></td>
+    `;
 
-        // Tombol lihat foto untuk semua link
-        let fotoBtns = "-";
-        if (item.fotoLinks && item.fotoLinks.length > 0) {
-            fotoBtns = item.fotoLinks.map(link => {
-                // Ambil ID file dari link Drive
-                const driveId = link.match(/[-\w]{25,}/)?.[0];
-                const directLink = driveId
-                    ? `https://drive.google.com/uc?export=view&id=${driveId}`
-                    : link;
+    tableBody.appendChild(row);
+  });
 
-                return `<button style="font-size:12px; margin:2px;" onclick="window.open('${directLink}', '_blank')">📷 Lihat Foto</button>`;
-            }).join(" ");
-        }
+ // 🔹 Status + Navigasi (modern style)
+const totalPages = Math.ceil(data.length / pageSize);
+statusEl.innerHTML = `
+  <div style="font-weight:500; margin-bottom:6px;">
+    🟢 Menampilkan ${start + 1} - ${Math.min(end, data.length)} dari ${data.length} data
+  </div>
+  <div style="display:flex; gap:10px; align-items:center; justify-content:center; margin-top:8px;">
+    <button 
+      class="page-btn" 
+      ${currentPage === 1 ? "disabled" : ""} 
+      onclick="prevPage()">⬅️ Sebelumnya
+    </button>
+    <span style="font-size:14px; font-weight:600; color:#555;">
+      Halaman ${currentPage} / ${totalPages}
+    </span>
+    <button 
+      class="page-btn" 
+      ${currentPage === totalPages ? "disabled" : ""} 
+      onclick="nextPage()">Berikutnya ➡️
+    </button>
+  </div>
+`;
 
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${item.kodeBarang || '-'}</td>
-            <td>${item.namaBarang || '-'}</td>
-            <td>${item.jumlahBarang || '-'}</td>
-            <td>${formatRupiah(item.hargaBarang)}</td>
-            <td>${item.tanggalBarang || '-'}</td>
-            <td>${item.createdAt?.toDate ? item.createdAt.toDate().toLocaleString("id-ID") : '-'}</td>
-            <td>${item.kategori || '-'}</td>
-            <td>${item.satuan || '-'}</td>
-            <td>${item.jenisDana || '-'}</td>
-            <td>${item.merek || '-'}</td>
-            <td>${fotoBtns}</td>
-            <td>${item.keterangan || '-'}</td>
-            <td><button style="font-size:12px;" onclick="editRowPopup(${index})">✏️ Edit</button></td>
-        `;
-
-        tableBody.appendChild(row);
-    });
-
-    statusEl.textContent = `🟢 ${data.length} data ditampilkan`;
 }
+
+// 🔹 Navigasi halaman
+window.prevPage = function() {
+  if (currentPage > 1) {
+    currentPage--;
+    applyFilters();
+  }
+};
+window.nextPage = function() {
+  const totalPages = Math.ceil(allData.length / pageSize);
+  if (currentPage < totalPages) {
+    currentPage++;
+    applyFilters();
+  }
+};
+
+
 
 
 
@@ -105,41 +172,10 @@ function editRowPopup(index) {
   document.getElementById("editDana").value = item.jenisDana || '';
   document.getElementById("editKeterangan").value = item.keterangan || '';
 
-  // Preview foto
-  const fotoPreview = document.getElementById("editFotoPreview");
-  fotoPreview.innerHTML = ''; // kosongkan dulu
-  if(item.fotoURL){
-    const img = document.createElement("img");
-    img.src = item.fotoURL;
-    img.style.width = "80px";
-    img.style.height = "80px";
-    img.style.objectFit = "cover";
-    img.style.borderRadius = "4px";
-    fotoPreview.appendChild(img);
-  }
 
   editModal.style.display = "flex";
 }
 
-// Preview saat user pilih foto baru
-document.getElementById("editFoto").addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  const fotoPreview = document.getElementById("editFotoPreview");
-  fotoPreview.innerHTML = '';
-  if(file){
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const img = document.createElement("img");
-      img.src = ev.target.result;
-      img.style.width = "80px";
-      img.style.height = "80px";
-      img.style.objectFit = "cover";
-      img.style.borderRadius = "4px";
-      fotoPreview.appendChild(img);
-    };
-    reader.readAsDataURL(file);
-  }
-});
 window.editRowPopup = editRowPopup; // Agar bisa dipanggil dari HTML onclick
 
 // 🔹 Cancel edit
@@ -155,6 +191,7 @@ editForm.onsubmit = async (e) => {
   const item = allData[currentEditIndex];
   const updateData = {
     namaBarang: document.getElementById("editNama").value,
+    merek: document.getElementById("editMerek").value, // <--- tambahkan ini
     jumlahBarang: Number(document.getElementById("editJumlah").value),
     hargaBarang: Number(document.getElementById("editHarga").value),
     tanggalBarang: document.getElementById("editTanggal").value,
@@ -162,7 +199,8 @@ editForm.onsubmit = async (e) => {
     satuan: document.getElementById("editSatuan").value,
     jenisDana: document.getElementById("editDana").value,
     keterangan: document.getElementById("editKeterangan").value
-  };
+};
+
 
   try {
     await updateDoc(doc(db, "barangMasuk", item.id), updateData);
@@ -217,27 +255,46 @@ async function loadData() {
     statusEl.textContent = `❌ Gagal memuat data: ${err.message}`;
   }
 }
-
-// 🔹 Filter & Search
 function applyFilters() {
   const kategori = kategoriDropdown.value;
   const satuan = satuanDropdown.value;
   const dana = jenisDanaDropdown.value;
   const keyword = searchInput.value.toLowerCase();
 
+  const tanggalBarang = document.getElementById("searchTanggalBarang").value;
+  const tanggalInput = document.getElementById("searchTanggalInput").value;
+
   const filtered = allData.filter(item => {
+    // cek keyword (kode, nama, merek)
+    const matchKeyword = 
+      item.kodeBarang.toLowerCase().includes(keyword) ||
+      item.namaBarang.toLowerCase().includes(keyword) ||
+      (item.merek && item.merek.toLowerCase().includes(keyword));
+
+    // cek tanggal barang
+    const matchTanggalBarang = !tanggalBarang || item.tanggalBarang === tanggalBarang;
+
+    // cek tanggal input sistem (pakai format YYYY-MM-DD dari createdAt)
+    let createdAtStr = "";
+    if (item.createdAt?.toDate) {
+      const d = item.createdAt.toDate();
+      createdAtStr = d.toISOString().split("T")[0]; // YYYY-MM-DD
+    }
+    const matchTanggalInput = !tanggalInput || createdAtStr === tanggalInput;
+
     return (!kategori || item.kategori === kategori) &&
            (!satuan || item.satuan === satuan) &&
            (!dana || item.jenisDana === dana) &&
-           (
-             item.kodeBarang.toLowerCase().includes(keyword) ||
-             item.namaBarang.toLowerCase().includes(keyword) ||
-             (item.merek && item.merek.toLowerCase().includes(keyword))
-           );
+           matchKeyword &&
+           matchTanggalBarang &&
+           matchTanggalInput;
   });
 
   renderTable(filtered);
 }
+searchInput.addEventListener("input", applyFilters);
+document.getElementById("searchTanggalBarang").addEventListener("change", applyFilters);
+document.getElementById("searchTanggalInput").addEventListener("change", applyFilters);
 
 
 kategoriDropdown.addEventListener("change", async (e) => {
@@ -298,12 +355,16 @@ function sortData(field, asc = true) {
 }
 
 let kodeAsc=true, namaAsc=true, jumlahAsc=true, hargaAsc=true, tanggalAsc=true, inputAsc=true;
+let merekAsc = true;
 document.getElementById("sortKodeBtn").addEventListener("click", ()=>{ sortData("kodeBarang", kodeAsc); kodeAsc=!kodeAsc; });
 document.getElementById("sortNamaBtn").addEventListener("click", ()=>{ sortData("namaBarang", namaAsc); namaAsc=!namaAsc; });
 document.getElementById("sortJumlahBtn").addEventListener("click", ()=>{ sortData("jumlahBarang", jumlahAsc); jumlahAsc=!jumlahAsc; });
 document.getElementById("sortHargaBtn").addEventListener("click", ()=>{ sortData("hargaBarang", hargaAsc); hargaAsc=!hargaAsc; });
 document.getElementById("sortTanggalBtn").addEventListener("click", ()=>{ sortData("tanggalBarang", tanggalAsc); tanggalAsc=!tanggalAsc; });
 document.getElementById("sortInputBtn").addEventListener("click", ()=>{ sortData("createdAt", inputAsc); inputAsc=!inputAsc; });
-
+document.getElementById("sortMerekBtn").addEventListener("click", () => {
+  sortData("merek", merekAsc);
+  merekAsc = !merekAsc;
+});
 // 🔹 Load awal
 loadData();

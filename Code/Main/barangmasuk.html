@@ -19,7 +19,7 @@
         <a href="dashboard_admin.html">Dashboard</a>
         <a href="barangmasuk.html">Barang Masuk</a>
         <a href="#">Laporan</a>
-        <button onclick="logout()" style="padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <button clas onclick="logout()" style="font-weight:  bold;padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
           Logout
         </button>
       </nav>
@@ -32,7 +32,16 @@
       <h2>Form Input Barang Masuk</h2>
       <form id="barangForm">
         <input type="text" id="namaBarang" placeholder="Nama Barang" required>
-        <input type="text" id="merekInput" placeholder="Masukkan merek" required>
+        
+        <!-- mEREK -->
+        <div style="display: flex; align-items: center; margin: 10px 0; gap: 15px;">
+          <p style="margin: 0; font-weight: bold; min-width: 120px; opacity: 0.7;">merek</p>
+          <select id="merekDropdown" required style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
+            <option value="">-- Pilih merek --</option>
+            <option value="__tambah__">➕ Tambah merek baru...</option>
+          </select>
+        </div>
+
         <input type="number" id="jumlahBarang" placeholder="Jumlah Barang" required>
         <input type="text" id="hargaBarang" placeholder="Harga Barang (Rp)" required>
 
@@ -116,7 +125,9 @@
         </button>
       </form>
 
+      
       <div id="status">⏳ Mengecek koneksi Firestore...</div>
+      <div id="popup"></div>
     </div>
   </main>
 

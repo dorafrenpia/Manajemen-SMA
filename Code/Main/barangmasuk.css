@@ -13,6 +13,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  
 }
 
 /* Header */
@@ -22,7 +23,6 @@ header {
   padding: 15px 0;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
-
 header .container {
   width: 90%;
   max-width: 1200px;
@@ -101,9 +101,11 @@ main {
   text-align: center;
 }
 
+/* Judul form */
 .form-container h2 {
   margin-bottom: 20px;
   color: #4a90e2;
+  word-wrap: break-word; /* judul fleksibel di layar sempit */
 }
 
 /* Input & Button */
@@ -123,13 +125,6 @@ input:focus {
   outline: none;
 }
 
-button {
-  background: linear-gradient(90deg, #4a90e2, #357abd);
-  color: #fff;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
 
 button:hover {
   background: linear-gradient(90deg, #357abd, #2a5c9e);
@@ -142,7 +137,7 @@ button:hover {
   align-items: center;
   margin: 12px 0;
   gap: 15px;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* fleksibel di layar kecil */
   text-align: left;
 }
 
@@ -168,6 +163,7 @@ button:hover {
   font-weight: bold;
   font-size: 14px;
   color: #555;
+  word-wrap: break-word; /* fleksibel */
 }
 
 /* Footer */
@@ -180,6 +176,32 @@ footer {
   margin-top: auto;
 }
 
+/* Popup fleksibel di kanan */
+#popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;          /* tetap di kanan */
+  max-width: 90%;       /* fleksibel di layar sempit */
+  background: #28a745;  
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 1000;
+  font-weight: bold;
+  text-align: right;
+  word-wrap: break-word; /* teks panjang tidak keluar */
+}
+
+/* Saat muncul */
+#popup.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   header .container {
@@ -187,7 +209,36 @@ footer {
     text-align: center;
     gap: 10px;
   }
+.form-row label {
+    flex: 1 1 100%;  /* label full width */
+  }
 
+  .form-row input,
+  .form-row select {
+    flex: 1 1 100%;  /* input/select full width */
+  }
+
+  /* Input tanggal fleksibel */
+  .form-row input[type="date"] {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    font-size: 14px;
+
+    /* Sembunyikan teks placeholder / default tanggal (optional) */
+    color: transparent;
+    text-shadow: 0 0 0 #000; /* tetap terlihat nilai ketika diisi */
+  }
+
+  /* Icon kalender tetap terlihat */
+  .form-row input[type="date"]::-webkit-calendar-picker-indicator {
+    color: #000;
+    opacity: 1;
+    position: relative;
+    z-index: 1;
+  }
   nav a {
     margin: 0 10px;
   }
@@ -200,4 +251,54 @@ footer {
   .form-row label {
     min-width: unset;
   }
+
+  .form-container {
+    padding: 25px 20px;
+  }
+
+ 
+}
+/* Dropdown / Select */
+select {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 8px 0;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  appearance: none; /* hapus gaya default browser */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: all 0.3s;
+}
+
+select:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74,144,226,0.4);
+  outline: none;
+}
+
+/* Dropdown fleksibel di form-row */
+.form-row select {
+  flex: 1; /* ikut menyesuaikan ukuran di flex container */
+  min-width: 0; /* supaya flex shrink bekerja */
+}
+.dropdown {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  width: 250px;
+  display: none;
+  z-index: 1000;
+}
+.dropdown div {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.dropdown div:hover {
+  background: #f0f0f0;
 }
