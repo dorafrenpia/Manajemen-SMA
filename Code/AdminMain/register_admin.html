@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register IT/Admin</title>
+  <!-- Link ke CSS eksternal -->
+  <link rel="stylesheet" href="/AdminMain/style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h2>Register IT/Admin</h2>
+
+    <!-- Form Register -->
+    <input type="text" id="nama" placeholder="Nama">
+    <input type="password" id="password" placeholder="Password">
+    <select id="role">
+      <option value="IT">IT</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button id="registerBtn">Register</button>
+
+    <!-- Popup untuk notifikasi -->
+    <div id="popup" class="popup"></div>
+
+    <!-- Debug box (opsional) -->
+    <div id="debug"></div>
+  </div>
+
+  <!-- Firebase + Register JS -->
+  <script type="module" src="register.js"></script>
+
+</body>
+</html>
