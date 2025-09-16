@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="/Register/register.css">
+  <style>
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px; /* jarak antar button */
+      margin-top: 30px;
+    }
+
+    .button-group button {
+      padding: 10px 10px; /* ukuran button */
+      font-size: 1em;     /* tidak terlalu besar / kecil */
+      border-radius: 8px; /* sudut melengkung */
+      cursor: pointer;
+      transition: 0.2s;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+    }
+
+    .button-group button:hover {
+      transform: scale(1.05); /* efek hover ringan */
+      opacity: 0.9;
+    }
+
+    .back-button {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 25px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #f24545; /* warna abu-abu */
+      color: #fff;
+      border: none;
+      transition: 0.2s;
+    }
+
+    .back-button:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+      background-color: #f24545;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="text-align:center;">Pilih Tipe Akun</h2>
+
+    <!-- 3 Button -->
+    <div class="button-group">
+      <button onclick="window.location.href='register_guru.html'">Guru</button>
+      <button onclick="window.location.href='register_murid.html'">Murid</button>
+      <button onclick="window.location.href='register_organisasi.html'">Organisasi</button>
+    </div>
+
+    <!-- Button Kembali -->
+    <button class="back-button" onclick="window.location.href='/Login/login.html'">Kembali</button>
+    
+  </div>
+</body>
+</html>

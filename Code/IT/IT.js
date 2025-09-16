@@ -237,7 +237,7 @@ nextBtn.textContent = "Next";
 
 paginationContainer.appendChild(prevBtn);
 paginationContainer.appendChild(nextBtn);
-document.querySelector(".container").appendChild(paginationContainer);
+document.querySelector(".containerForm2").appendChild(paginationContainer);
 
 prevBtn.addEventListener("click", () => {
   if (currentPage > 1) {

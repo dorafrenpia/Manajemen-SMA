@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link rel="stylesheet" href="/Login/login.css">
+  <style>
+    .loginbtn:hover {
+transform: scale(1.05) !important;
+  opacity: 0.8 !important;
+  
+}
+  </style>
 </head>
 <body>
   <div class="container">
@@ -12,14 +19,14 @@
     <form id="loginForm">
       <input type="text" id="nama" placeholder="Nama" required>
       <input type="password" id="password" placeholder="Password" required>
-      <button type="submit" id="loginBtn">Login</button>
+      <button type="submit" id="loginBtn"class="loginbtn">Login</button>
     </form>
 
     <!-- Tambahkan button registrasi -->
   <p class="register-text">
   Belum punya akun? 
-  <a href="/Login/register.html">
-    <button id="registerBtn" type="button">Registrasi</button>
+  <a href="/Register/register.html">
+    <button id="registerBtn" type="button" class="loginbtn">Registrasi</button>
   </a>
 </p>
 
@@ -27,5 +34,6 @@
   </div>
 
   <script type="module" src="/Login/login.js"></script>
+  <script type="module" src="/Login/login2.js"></script>
 </body>
 </html>

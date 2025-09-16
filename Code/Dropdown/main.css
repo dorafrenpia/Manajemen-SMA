@@ -1,0 +1,144 @@
+
+/* =========================
+   POPUP EDIT (overlay fullscreen)
+========================= */
+.popup-edit {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 250px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); /* overlay hitam transparan */
+  display: none;  /* default hidden */
+  justify-content: center;  /* horizontal center */
+  align-items: center;      /* vertical center */
+  z-index: 1000;
+}
+
+/* =========================
+   POPUP NOTIF (pojok kanan)
+========================= */
+.popup-notif {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #333;
+  color: #fff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 3000;
+}
+
+.popup-notif.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.popup-notif.success {
+  background-color: #28a745;
+}
+
+.popup-notif.error {
+  background-color: #dc3545;
+}
+
+.popup-notif.info {
+  background-color: #007bff;
+}
+
+/* Buttons in table */
+.delete-users-btn,
+.delete-all-btn {
+  padding: 4px 8px;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.delete-users-btn {
+  background-color: #e67e22;
+  margin-right: 5px;
+}
+
+.delete-users-btn:hover {
+  background-color: #d35400;
+}
+
+.delete-all-btn {
+  background-color: #e74c3c;
+}
+
+.delete-all-btn:hover {
+  background-color: #c0392b;
+}
+
+.edit-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 4px 6px;   /* lebih ramping */
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 4px 6px;   /* lebih ramping */
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background: #2980b9;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+}
+
+button.group-button {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: background 0.3s;
+}
+
+button.group-button:hover {
+  background: #0056b3;
+}

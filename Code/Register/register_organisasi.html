@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="/Register/register.css">
+
+  <style>
+    .back-button {
+  display: block !important;
+  
+  cursor: pointer !important;
+  background-color: #f24545 !important; /* warna merah */
+  border: none !important;
+  transition: 0.2s !important;
+}
+
+.back-button:hover {
+ transform: scale(1.05) !important;
+  opacity: 0.8 !important;
+  
+}
+
+.button-login {
+  display: block !important;
+  
+  cursor: pointer !important;
+  background-color:#007bff !important; /* warna merah */
+  border: none !important;
+  transition: 0.2s !important;
+}
+
+.button-login:hover {
+  transform: scale(1.05) !important;
+  opacity: 0.8 !important;
+  
+}
+   .back-button-daftar {
+  display: block !important;
+  
+  cursor: pointer !important;
+  background-color: rgb(20, 159, 20) !important; /* warna merah */
+  border: none !important;
+  margin: 2% 0 2% 0;
+  transition: 0.2s !important;
+}
+
+.back-button-daftar:hover {
+  transform: scale(1.05) !important;
+  opacity: 0.8 !important;
+  
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Form Registrasi</h2>
+    <form id="registerForm">
+      <input type="text" id="nama" placeholder="Nama Lengkap" required>
+      <input type="text" id="nisn" placeholder="NISN" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="telepon" placeholder="No. Telepon" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <input type="password" id="confirmPassword" placeholder="Konfirmasi Password" required>
+      <button class="back-button-daftar" type="submit">Daftar</button>
+    </form>
+
+    <!-- Button Kembali -->
+    <button class="back-button" onclick="window.location.href='register.html'"">Kembali</button>
+
+    <!-- Teks & Button Sudah Punya Akun -->
+    <p class="login-text" style="margin-top: 15px;">
+      Sudah punya akun? 
+      <a href="/Login/login.html">
+        <button type="button" id="loginBtn" class="button-login">Login</button>
+      </a>
+    </p>
+
+    <p id="status"></p>
+  </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="register_murid.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+
+/* =========================
+   SORT BUTTONS
+========================= */
+.sort-btn {
+  all: unset;
+      border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    color: #fff;
+    padding: 0;
+    line-height: 1;
+        cursor: pointer;
+    margin-left: 5px;
+}
+
+.sort-btn:hover {
+  color: #ffeb3b; /* optional: warna teks saat hover */
+}
+.link-container {
+  text-align: center;        /* center link */
+  margin-top: 15px;       /* jarak ke bawah */
+  border-bottom: 4px dashed  #ccc;  /* garis panjang */
+  padding-bottom: 20px;       /* jarak antara teks dan garis */
+}
+.link-text {
+  cursor: pointer;
+  font-weight: bold;
+}

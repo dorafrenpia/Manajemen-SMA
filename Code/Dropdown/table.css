@@ -1,0 +1,70 @@
+
+/* Table container */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  min-width: 600px;
+}
+
+table th, table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: center;
+  white-space: nowrap;
+}
+
+table th {
+  background: linear-gradient(90deg, #4a90e2, #357abd);
+  color: #fff;
+  font-weight: 600;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9fbfd;
+}
+
+table tr:hover {
+  background-color: #e6f2ff;
+  transition: background 0.3s;
+}
+
+/* Sort button di header table */
+.th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sort-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  color: #fff;
+  padding: 0;
+  line-height: 1;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  th, td {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  table {
+    min-width: 480px;
+  }
+  th, td {
+    padding: 6px;
+    font-size: 12px;
+  }
+}
