@@ -165,20 +165,19 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
     const worksheet = workbook.addWorksheet('BarangMasuk');
 
     worksheet.columns = [
-      { header: 'No', key: 'no', width: 5 },
-      { header: 'ID', key: 'id', width: 25 },
-      { header: 'Kode', key: 'kode', width: 20 },
-      { header: 'Nama', key: 'nama', width: 20 },
-      { header: 'Merek', key: 'merek', width: 15 },
-      { header: 'Kategori', key: 'kategori', width: 15 },
-      { header: 'Jumlah', key: 'jumlah', width: 10 },
-      { header: 'Satuan', key: 'satuan', width: 10 },
-      
-      { header: 'JenisDana', key: 'jenisDana', width: 15 },
-      { header: 'TanggalBarang', key: 'tanggal', width: 15 },
-      { header: 'Keterangan', key: 'keterangan', width: 20 },
-      { header: 'Foto1', key: 'foto', width: 25 }
-    ];
+  { header: 'No', key: 'no', width: 5 },
+  { header: 'ID', key: 'id', width: 25 },
+  { header: 'Kode', key: 'kode', width: 20 },
+  { header: 'Nama', key: 'nama', width: 20 },
+  { header: 'Merek', key: 'merek', width: 15 },
+  { header: 'Kategori', key: 'kategori', width: 15 },
+  { header: 'Jumlah', key: 'jumlah', width: 10 },
+  { header: 'Satuan', key: 'satuan', width: 10 },
+  { header: 'JenisDana', key: 'jenisDana', width: 15 },
+  { header: 'TanggalBarang', key: 'tanggal', width: 15 },
+  { header: 'Foto1', key: 'foto', width: 25 },       // Foto sebelum Keterangan
+  { header: 'Keterangan', key: 'keterangan', width: 20 }
+];
 
     // Styling header
     worksheet.getRow(1).eachCell(cell => {
@@ -201,33 +200,23 @@ snapshot.forEach(doc => {
   const fotoLink = d.fotoLinks?.[0] || '';
 
   // Tambahkan row tanpa foto dulu
-  const row = worksheet.addRow({
-    no: no++,
-    id: doc.id,
-    kode: d.kodeBarang,
-    nama: d.namaBarang,
-    merek: d.merek,
-    kategori: d.kategori,
-    jumlah: d.jumlahBarang,
-    satuan: d.satuan,
-    
-    jenisDana: d.jenisDana,
-    tanggal: d.tanggalBarang,
-    keterangan: d.keterangan
-  });
-
-  // Tambahkan direct link untuk kolom Foto (kolom ke-13)
-  if(fotoLink) {
-    const directLink = driveDirectLink(fotoLink);
-    row.getCell(13).value = directLink;
-    row.getCell(13).font = { color: { argb: 'FF0000FF' }, underline: true }; // biru & underline
-  } else {
-    row.getCell(13).value = "-";
-  }
+ const row = worksheet.addRow({
+  no: no++,
+  id: doc.id,
+  kode: d.kodeBarang,
+  nama: d.namaBarang,
+  merek: d.merek,
+  kategori: d.kategori,
+  jumlah: d.jumlahBarang,
+  satuan: d.satuan,
+  jenisDana: d.jenisDana,
+  tanggal: d.tanggalBarang,
+  foto: fotoLink,       // <-- letakkan sebelum keterangan
+  keterangan: d.keterangan
 });
 
-    // Format harga jadi Rupiah
-    worksheet.getColumn('harga').numFmt = '"Rp"#,##0.00;[Red]\-"Rp"#,##0.00';
+});
+
 
     // Export Excel
     const buffer = await workbook.xlsx.writeBuffer();
@@ -245,9 +234,13 @@ snapshot.forEach(doc => {
 });
 const exportSheetBtn = document.getElementById('exportSheetBtn');
 const goToSheetBtn = document.getElementById('goToSheetBtn');
+// URL Web App (versi terbaru)
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxgl_S64C593Sg3oyb1ihowpvguKj_H4yyuz8vAGIcePVhbfPFghZwhzZsh8lEXQVN0/exec";
 
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx03av13XLova-tKM4D68suF7clqYGbspM3LI5PA0nx777NI0R-1Uf_U3DFuCvPW4EF/exec";
+// ID Google Sheet
 const SHEET_ID = "1OORQVn4dP3BCXM29G87_nGKYBpHzv1vzkPPfZvARlY8";
+
+// URL langsung ke Google Sheet
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}`;
 
 exportSheetBtn.addEventListener('click', async () => {

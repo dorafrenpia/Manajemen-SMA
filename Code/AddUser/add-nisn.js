@@ -8,21 +8,36 @@ const popup = document.getElementById("popup");
 const nisnTableBody = document.querySelector("#nisnTable tbody");
 // Data NISN contoh
 let allNISN = [
-  { no: 1, nisn: "12345", nama: "Budi", email: "budi@mail.com", telepon: "081234", status: "Aktif" },
-  { no: 2, nisn: "54321", nama: "Ani", email: "ani@mail.com", telepon: "081235", status: "Pending" },
-  // bisa tambah data lainnya
+  { no: 1, nisn: "12345", nama: "Budi", email: "budi@mail.com", telepon: "081234", status: "Aktif", tanggalInput: "2025-09-16 08:30" },
+  { no: 2, nisn: "54321", nama: "Ani", email: "ani@mail.com", telepon: "081235", status: "Pending", tanggalInput: "2025-09-16 08:45" },
 ];
+
 
 let currentPage = 1;
 const pageSize = 10;
 let searchTerm = "";
-
 // Elemen container
 const infoContainer = document.getElementById("infoData");
 const searchContainer = document.getElementById("searchContainer");
 const tbody = document.querySelector("#nisnTable tbody");
 let sortColumn = null;
 let sortAsc = true;
+
+// Fungsi format tanggal Firestore atau string
+function formatDate(timestamp) {
+  if (!timestamp) return "-";
+  if (timestamp.toDate) { 
+    const date = timestamp.toDate();
+    return date.getFullYear() + "-" +
+           String(date.getMonth() + 1).padStart(2,'0') + "-" +
+           String(date.getDate()).padStart(2,'0') + " " +
+           String(date.getHours()).padStart(2,'0') + ":" +
+           String(date.getMinutes()).padStart(2,'0');
+  } else if (typeof timestamp === "string") {
+    return timestamp;
+  }
+  return "-";
+}
 
 document.querySelectorAll(".sort-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -62,6 +77,7 @@ document.querySelectorAll(".sort-btn").forEach(btn => {
     displayPage(currentPage);
   });
 });
+
 // --- Buat input search ---
 const searchInput = document.createElement("input");
 searchInput.type = "text";
@@ -86,8 +102,7 @@ function showPopup(message, type = "info", duration = 3000) {
   setTimeout(() => {
     popup.className = "popup";
   }, duration);
-}
-async function fetchAllNISN() {
+}async function fetchAllNISN() {
   const nisnRef = collection(db, "nisn");
   const usersRef = collection(db, "users");
   const nisnSnap = await getDocs(nisnRef);
@@ -104,7 +119,6 @@ async function fetchAllNISN() {
     let status, usersList;
     if (!userSnap.empty) {
       status = "Aktif";
-      // Ambil semua pengguna terkait NISN
       usersList = userSnap.docs.map(d => {
         const u = d.data();
         return {
@@ -118,57 +132,47 @@ async function fetchAllNISN() {
       usersList = [];
     }
 
-    allNISN.push({ nisn: nisnValue, status, usersList });
+    allNISN.push({
+      nisn: nisnValue,
+      status,
+      usersList,
+      tanggalInput: data.tanggalInput || "-"  // pastikan tanggalInput ada
+    });
   }
 }
+
+
 function displayPage(page) {
-  nisnTableBody.innerHTML = ""; // <-- ini wajib
-  // Filter data sesuai search
-const filteredData = allNISN.filter(item => {
-  const nama = item.usersList.length > 0 ? item.usersList[0].nama.toLowerCase() : "";
-  return item.nisn.toLowerCase().includes(searchTerm) || nama.includes(searchTerm);
-});
+  nisnTableBody.innerHTML = "";
 
-
-
-
+  const filteredData = allNISN.filter(item => {
+    const nama = item.usersList.length > 0 ? item.usersList[0].nama.toLowerCase() : "";
+    return item.nisn.toLowerCase().includes(searchTerm) || nama.includes(searchTerm);
+  });
 
   const start = (page - 1) * pageSize;
   const end = Math.min(start + pageSize, filteredData.length);
-  const pageData = filteredData.slice(start, end);
-pageData.forEach((item, index) => {
-  const row = document.createElement("tr");
-  const statusClass = item.status === "Aktif" ? "status-aktif" : "status-tidak-aktif";
-  row.innerHTML = `
-  <td>${start + index + 1}</td>
-  <td>${item.nisn}</td>
-  <td>
-    ${item.usersList.length > 0 
-      ? item.usersList.map(u => u.nama).join("<br>") 
-      : "-"}
-  </td>
-  <td>
-    ${item.usersList.length > 0 
-      ? item.usersList.map(u => u.email).join("<br>") 
-      : "-"}
-  </td>
-  <td>
-    ${item.usersList.length > 0 
-      ? item.usersList.map(u => u.telepon).join("<br>") 
-      : "-"}
-  </td>
-  <td class="${item.status === "Aktif" ? "status-aktif" : "status-tidak-aktif"}">
-    ${item.status}
-  </td>
-  <td>
-    <button class="delete-users-btn" data-nisn="${item.nisn}">User</button>
-    <button class="delete-all-btn" data-nisn="${item.nisn}">ALL</button>
-  </td>
-`;
+  const pageData = filteredData.slice(start, end);  // <-- di sini pageData dibuat
 
-  nisnTableBody.appendChild(row);
-});
+  pageData.forEach((item, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${start + index + 1}</td>
+      <td>${item.nisn}</td>
+      <td>${item.usersList.length > 0 ? item.usersList.map(u => u.nama).join("<br>") : "-"}</td>
+      <td>${item.usersList.length > 0 ? item.usersList.map(u => u.email).join("<br>") : "-"}</td>
+      <td>${item.usersList.length > 0 ? item.usersList.map(u => u.telepon).join("<br>") : "-"}</td>
+      <td class="${item.status === "Aktif" ? "status-aktif" : "status-tidak-aktif"}">${item.status}</td>
+      <td>${formatDate(item.tanggalInput)}</td>
+      <td>
+        <button class="delete-users-btn" data-nisn="${item.nisn}">User</button>
+        <button class="delete-all-btn" data-nisn="${item.nisn}">ALL</button>
+      </td>
+    `;
+    nisnTableBody.appendChild(row);
+  });
 
+  // info dan pagination...
 
 
   // <-- letakkan di sini -->
@@ -183,8 +187,7 @@ pageData.forEach((item, index) => {
   nextBtn.disabled = end >= filteredData.length;
 }
 
-
-// Event klik tombol Tambah NISN
+// ====== Event klik tombol Tambah NISN ======
 addBtn.addEventListener("click", async () => {
   const nisn = nisnInput.value.trim();
   if (!nisn) {
@@ -202,11 +205,16 @@ addBtn.addEventListener("click", async () => {
       return;
     }
 
-    await addDoc(nisnRef, { nisn });
+    // Tambahkan tanggal input
+    await addDoc(nisnRef, { 
+      nisn, 
+      tanggalInput: new Date() 
+    });
+
     showPopup(`NISN ${nisn} berhasil ditambahkan!`, "success");
     nisnInput.value = "";
 
-    // reload data
+    // Reload data dan tampilkan halaman pertama
     await fetchAllNISN();
     currentPage = 1;
     displayPage(currentPage);
