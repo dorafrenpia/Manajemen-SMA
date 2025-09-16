@@ -67,3 +67,28 @@ button:hover { background:#0056b3; }
 #registerBtn:hover {
   background: #218838;
 }
+.bg-logo {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 550px;
+  opacity: 0.2; /* transparan supaya tidak mengganggu */
+  pointer-events: none;
+  z-index: 0;
+}/* Media query untuk layar kecil / handphone */
+@media (max-width: 480px) {
+  .container {
+    width: 90%;       /* container ikut lebar layar */
+    padding: 15px;    /* sedikit lebih kecil supaya muat */
+  }
+
+  input {
+    width: 95%;       /* input hampir full lebar container */
+  }
+
+  .bg-logo {
+    width: 80%;       /* logo mengecil agar muat di layar kecil */
+    top: 15%;         /* sedikit naik supaya tidak tumpang tindih */
+  }
+}

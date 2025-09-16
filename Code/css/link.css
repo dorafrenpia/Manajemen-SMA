@@ -1,0 +1,29 @@
+.hover-link {
+  color: white;
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Efek underline animasi dari tengah */
+.hover-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: white;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+/* Hover efek */
+.hover-link:hover {
+  transform: scale(1.2); /* membesar */
+}
+
+.hover-link:hover::after {
+  width: 100%; /* underline muncul penuh */
+}

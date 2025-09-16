@@ -10,7 +10,9 @@
   <link rel="stylesheet" href="/IT/sortbutton.css"> <!-- bisa buat CSS khusus IT -->
   <link rel="stylesheet" href="/IT/SidePopUp.css"> <!-- bisa buat CSS khusus IT -->
   <link rel="stylesheet" href="/IT/Buttoninput.css"> <!-- bisa buat CSS khusus IT -->
-  <style>
+   <link rel="stylesheet" href="/css/refresh.css">
+      <link rel="stylesheet" href="/css/buttonhover.css">
+  <link rel="stylesheet" href="/css/link.css"><style>
     body { font-family: Arial, sans-serif; }
     button { padding: 6px 12px; border-radius: 5px; cursor: pointer; }
 
@@ -57,10 +59,20 @@
   
   padding: 20px;
   border-radius: 8px;
-  width: 400px;
+  width: 100%;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   text-align: center;
+}.header-with-img {
+  display: flex;
+  align-items: center;  /* teks dan gambar sejajar vertikal */
+  gap: 10px;            /* jarak antara gambar dan teks */
 }
+
+.header-logo {
+  width: 90px;          /* sesuaikan ukuran gambar */
+  height: auto;
+}
+
 
   </style>
 </head>
@@ -69,11 +81,15 @@
   <!-- Header -->
   <header>
     <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
-      <h1><a href="IT.html">Manajemen Gudang - IT</a></h1>
+      <h1 class="header-with-img">
+  <img src="../favicon.png" alt="Logo" class="header-logo">
+  <a href="IT.html">Manajemen Gudang - IT</a>
+</h1>
+
       <nav style="display: flex; gap: 15px; align-items: center;">
         <a href="IT.html">Murid</a>
-        <a href="barangmasuk.html">Guru</a>
-        <a href="/Dropdown/dropdown.html">Organisasi</a>
+        <a href="/IT/IT_Guru.html">Guru</a>
+        <a href="/IT/IT_Organisasi.html">Organisasi</a>
         <a href="/AdminMain/register_admin.html">Users</a>
        
 <button onclick="logout()" style="font-weight: bold; padding:6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>

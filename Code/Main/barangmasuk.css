@@ -302,3 +302,77 @@ select:focus {
 .dropdown div:hover {
   background: #f0f0f0;
 }
+
+/* Header dasar */
+header {
+  background: #4a90e2;
+  padding: 10px 20px;
+}
+
+header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* supaya bisa pindah ke baris baru di HP */
+}
+
+.header-with-img {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  width: 40px;
+  height: auto;
+}
+
+nav {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+nav button {
+  font-weight: bold;
+  padding: 6px 12px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+nav button:hover {
+  background: #c0392b;
+}
+
+/* Media query untuk HP */
+@media (max-width: 480px) {
+  header .container {
+    flex-direction: column; /* header vertikal */
+    align-items: flex-start; /* kiri */
+    gap: 10px;
+  }
+
+  nav {
+    flex-direction: column; /* menu vertikal */
+    gap: 8px;
+    width: 100%;
+  }
+
+  nav a, nav button {
+    width: 100%; /* full lebar di HP */
+    text-align: left;
+  }
+
+  .header-logo {
+    width: 30px; /* logo lebih kecil di HP */
+  }
+}

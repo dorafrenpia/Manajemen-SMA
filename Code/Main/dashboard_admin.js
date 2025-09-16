@@ -345,31 +345,58 @@ window.logout = function() {
     window.location.replace("/Login/login.html");
   });
 };
-
-
-// 🔹 Sort
 function sortData(field, asc = true) {
   allData.sort((a, b) => {
-    if (typeof a[field] === "number") return asc ? a[field]-b[field] : b[field]-a[field];
+    if (typeof a[field] === "number") return asc ? a[field] - b[field] : b[field] - a[field];
     return asc ? String(a[field]).localeCompare(String(b[field])) : String(b[field]).localeCompare(String(a[field]));
   });
   applyFilters();
 }
 
-let kodeAsc=true, namaAsc=true, jumlahAsc=true,  tanggalAsc=true, inputAsc=true;
+let kodeAsc = true, namaAsc = true, jumlahAsc = true, tanggalAsc = true, inputAsc = true;
 let merekAsc = true;
-document.getElementById("sortKodeBtn").addEventListener("click", ()=>{ sortData("kodeBarang", kodeAsc); kodeAsc=!kodeAsc; });
+let fotoAsc = true;
 
-
-document.getElementById("sortNamaBtn").addEventListener("click", ()=>{ sortData("namaBarang", namaAsc); namaAsc=!namaAsc; });
-document.getElementById("sortMerekBtn").addEventListener("click", () => {
-document.getElementById("sortJumlahBtn").addEventListener("click", ()=>{ sortData("jumlahBarang", jumlahAsc); jumlahAsc=!jumlahAsc; });
-
-document.getElementById("sortTanggalBtn").addEventListener("click", ()=>{ sortData("tanggalBarang", tanggalAsc); tanggalAsc=!tanggalAsc; });
-document.getElementById("sortInputBtn").addEventListener("click", ()=>{ sortData("createdAt", inputAsc); inputAsc=!inputAsc; });
-
-  sortData("merek", merekAsc);
-  merekAsc = !merekAsc;
+document.getElementById("sortKodeBtn").addEventListener("click", () => { 
+  sortData("kodeBarang", kodeAsc); 
+  kodeAsc = !kodeAsc; 
 });
+
+document.getElementById("sortNamaBtn").addEventListener("click", () => { 
+  sortData("namaBarang", namaAsc); 
+  namaAsc = !namaAsc; 
+});
+
+document.getElementById("sortMerekBtn").addEventListener("click", () => { 
+  sortData("merek", merekAsc); 
+  merekAsc = !merekAsc; 
+});
+
+document.getElementById("sortJumlahBtn").addEventListener("click", () => { 
+  sortData("jumlahBarang", jumlahAsc); 
+  jumlahAsc = !jumlahAsc; 
+});
+
+document.getElementById("sortTanggalBtn").addEventListener("click", () => { 
+  sortData("tanggalBarang", tanggalAsc); 
+  tanggalAsc = !tanggalAsc; 
+});
+
+document.getElementById("sortInputBtn").addEventListener("click", () => { 
+  sortData("createdAt", inputAsc); 
+  inputAsc = !inputAsc; 
+});
+
+document.getElementById("sortFotoBtn").addEventListener("click", () => {
+  allData.sort((a, b) => {
+    const aLen = a.fotoLinks ? a.fotoLinks.length : 0;
+    const bLen = b.fotoLinks ? b.fotoLinks.length : 0;
+    return fotoAsc ? aLen - bLen : bLen - aLen;
+  });
+  fotoAsc = !fotoAsc;
+  applyFilters(); // rerender tabel
+});
+
+
 // 🔹 Load awal
 loadData();

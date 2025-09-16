@@ -1,8 +1,8 @@
 body { font-family: Arial; background:#f0f4f7; display:flex; justify-content:center; align-items:center; height:100vh; }
 .container { background:white; padding:20px; border-radius:8px; width:300px; box-shadow:0 0 10px rgba(0,0,0,0.1); text-align:center;}
 input { width:90%; padding:10px; margin:5px 0; }
-button { width:100%; padding:10px; background:#28a745; color:white; border:none; border-radius:4px; cursor:pointer; }
-button:hover { background:#218838; }
+button { width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer; }
+button:hover { background:#0056b3; }
 
 /* Popup */
 .popup { position:fixed; top:20px; right:20px; background:#333; color:white; padding:15px 20px; border-radius:8px; opacity:0; pointer-events:none; transition:0.3s; z-index:1000; }
@@ -10,28 +10,85 @@ button:hover { background:#218838; }
 .popup.success { background:#28a745; }
 .popup.error { background:#dc3545; }
 .popup.info { background:#007bff; }
-.login-text {
-  font-size: 12px;
-  color: #555;
-  margin-top: 10px;
-  text-align: right;        /* posisi ke kanan */
-  display: flex;
-  justify-content: flex-end; 
-  align-items: center;
-  gap: 5px;
+/* Popup */
+.popup {
+  opacity: 0;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 6px;
+  z-index: 1000;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-#loginBtn {
-  padding: 5px 10px;
-  font-size: 12px;
-  width: auto;
-  background: #007bff;
+.popup.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* Popup types */
+.popup.info {
+  background-color: #2196F3;
+}
+
+.popup.success {
+  background-color: #4CAF50;
+}
+
+.popup.error {
+  background-color: #f44336;
+}
+.register-text {
+  font-size: 12px;       /* teks kecil */
+  color: #555;
+  margin-top: 10px;
+  text-align: left;      /* rata kiri */
+  display: flex;         /* supaya button ikut di kiri */
+  align-items: center;
+  gap: 5px;              /* jarak antara teks dan button */
+}
+
+#registerBtn {
+  padding: 5px 10px;     
+  font-size: 12px;       
+  width: auto;           
+  background: #28a745;   
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  color: white;
 }
 
-#loginBtn:hover {
-  background: #0056b3;
+#registerBtn:hover {
+  background: #218838;
+}
+.bg-logo {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 550px;
+  opacity: 0.2; /* transparan supaya tidak mengganggu */
+  pointer-events: none;
+  z-index: 0;
+}/* Media query untuk layar kecil / handphone */
+@media (max-width: 480px) {
+  .container {
+    width: 90%;       /* container ikut lebar layar */
+    padding: 15px;    /* sedikit lebih kecil supaya muat */
+  }
+
+  input {
+    width: 95%;       /* input hampir full lebar container */
+  }
+
+  .bg-logo {
+    width: 80%;       /* logo mengecil agar muat di layar kecil */
+    top: 15%;         /* sedikit naik supaya tidak tumpang tindih */
+  }
 }

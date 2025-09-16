@@ -53,7 +53,7 @@
 }
   </style>
 </head>
-<body>
+<body> <img src="../favicon.png" alt="logo" class="bg-logo">
   <div class="container">
     <h2>Form Registrasi</h2>
     <form id="registerForm">
@@ -70,12 +70,13 @@
     <button class="back-button" onclick="window.location.href='register.html'"">Kembali</button>
 
     <!-- Teks & Button Sudah Punya Akun -->
-    <p class="login-text" style="margin-top: 15px;">
-      Sudah punya akun? 
-      <a href="/Login/login.html">
-        <button type="button" id="loginBtn" class="button-login">Login</button>
-      </a>
-    </p>
+    <p class="login-text" style="display:flex; align-items:center; justify-content:center; gap:10px; font-size:14px; color:#555; font-weight:500; margin-top:15px; font-family:'Segoe UI', sans-serif;">
+  Sudah punya akun? 
+  <a href="/Login/login.html" style="text-decoration:none;">
+    <button type="button" id="loginBtn" class="button-login" style="padding:6px 14px; font-size:13px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition: all 0.3s ease;">Login</button>
+  </a>
+</p>
+
 
     <p id="status"></p>
   </div>

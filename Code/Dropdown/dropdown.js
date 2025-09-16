@@ -1,7 +1,7 @@
+// 🔹 Firebase Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import { 
-  getFirestore, collection, getDocs, doc, deleteDoc, updateDoc, addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
 // 🔹 Konfigurasi Firebase
 const firebaseConfig = {
@@ -17,7 +17,30 @@ const firebaseConfig = {
 // 🔹 Inisialisasi Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
+// 🔹 Logout Function
+window.logout = function() {
+  // Hapus status login lokal
+  localStorage.removeItem("isLoggedIn");
+  window.accessToken = "";
+  localStorage.removeItem("isDriveLoggedIn");
+  localStorage.removeItem("driveAccessToken");
+
+  const loginBtn = document.getElementById("loginBtn");
+  const sendBtn = document.getElementById("sendBtn");
+
+  if (loginBtn && window.updateLoginButton) window.updateLoginButton();
+  if (sendBtn) sendBtn.disabled = true;
+
+  // Logout Firebase
+  signOut(auth).finally(() => {
+    alert("✅ Berhasil logout dari aplikasi & Google Drive!");
+    window.location.replace("/Login/login.html");
+  });
+};
+
+// 🔹 DOM Elements
 const nisnTableBody = document.querySelector("#nisnTable tbody");
 const filterButtons = document.querySelectorAll(".filter-buttons button");
 
@@ -38,7 +61,7 @@ const addPopup = document.getElementById("addPopup");
 const addNamaInput = document.getElementById("addNama");
 const saveAddBtn = document.getElementById("saveAddBtn");
 const cancelAddBtn = document.getElementById("cancelAddBtn");
-const openAddBtn = document.getElementById("openAddBtn"); // tombol "Tambah Data"
+const openAddBtn = document.getElementById("openAddBtn");
 
 // Pagination
 const paginationContainer = document.createElement("div");
@@ -46,14 +69,14 @@ paginationContainer.style.marginTop = "15px";
 paginationContainer.style.textAlign = "center";
 document.querySelector(".table-container").appendChild(paginationContainer);
 
-let currentCollection = "merek"; // default
+let currentCollection = "merek";
 let currentEditId = null;
 let currentDeleteId = null;
-let allData = [];      // simpan semua dokumen
-let currentPage = 1;   // halaman aktif
+let allData = [];
+let currentPage = 1;
 const itemsPerPage = 10;
 
-// 🔹 Fungsi notif manual
+// 🔹 Notifikasi Manual
 function showManualNotif(pesan, warna = "green") {
   const box = document.getElementById("manualNotif");
   box.innerText = pesan;
@@ -62,9 +85,9 @@ function showManualNotif(pesan, warna = "green") {
   box.style.background = warna;
 }
 
-// 🔹 Load Data dari Firestore
+// 🔹 Load Data
 async function loadData(collectionName) {
-  nisnTableBody.innerHTML = ""; 
+  nisnTableBody.innerHTML = "";
   currentCollection = collectionName;
   allData = [];
   currentPage = 1;
@@ -72,19 +95,15 @@ async function loadData(collectionName) {
   try {
     const querySnapshot = await getDocs(collection(db, collectionName));
     querySnapshot.forEach((docSnap) => {
-      allData.push({
-        id: docSnap.id,
-        ...docSnap.data()
-      });
+      allData.push({ id: docSnap.id, ...docSnap.data() });
     });
-
     renderTable();
   } catch (error) {
     console.error("Error getting documents: ", error);
   }
 }
 
-// 🔹 Render Table sesuai halaman
+// 🔹 Render Table
 function renderTable() {
   nisnTableBody.innerHTML = "";
 
@@ -105,38 +124,28 @@ function renderTable() {
     nisnTableBody.appendChild(tr);
   });
 
-  // Re-attach event tombol edit & delete
   document.querySelectorAll(".edit-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      openEditPopup(btn.dataset.id, btn.dataset.nama);
-    });
+    btn.addEventListener("click", () => openEditPopup(btn.dataset.id, btn.dataset.nama));
   });
 
   document.querySelectorAll(".delete-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      openDeletePopup(btn.dataset.id, btn.dataset.nama);
-    });
+    btn.addEventListener("click", () => openDeletePopup(btn.dataset.id, btn.dataset.nama));
   });
 
   renderPagination();
 }
 
-// 🔹 Render Pagination Buttons
+// 🔹 Pagination
 function renderPagination() {
   paginationContainer.innerHTML = "";
-
   const totalPages = Math.ceil(allData.length / itemsPerPage);
-
   if (totalPages <= 1) return;
 
   const prevBtn = document.createElement("button");
   prevBtn.innerText = "⬅ Sebelumnya";
   prevBtn.disabled = currentPage === 1;
   prevBtn.style.marginRight = "10px";
-  prevBtn.onclick = () => {
-    currentPage--;
-    renderTable();
-  };
+  prevBtn.onclick = () => { currentPage--; renderTable(); };
   paginationContainer.appendChild(prevBtn);
 
   const pageInfo = document.createElement("span");
@@ -147,123 +156,80 @@ function renderPagination() {
   nextBtn.innerText = "Selanjutnya ➡";
   nextBtn.disabled = currentPage === totalPages;
   nextBtn.style.marginLeft = "10px";
-  nextBtn.onclick = () => {
-    currentPage++;
-    renderTable();
-  };
+  nextBtn.onclick = () => { currentPage++; renderTable(); };
   paginationContainer.appendChild(nextBtn);
 }
 
-// 🔹 Open Edit Popup
+// 🔹 Edit Popup
 function openEditPopup(id, namaLama) {
   currentEditId = id;
   editNamaInput.value = namaLama;
   editPopup.style.display = "flex";
 }
-
-// 🔹 Save Edit
 saveEditBtn.addEventListener("click", async () => {
   const newNama = editNamaInput.value.trim();
-  if (!newNama) {
-    showManualNotif("Nama tidak boleh kosong!", "orange");
-    return;
-  }
-
+  if (!newNama) { showManualNotif("Nama tidak boleh kosong!", "orange"); return; }
   try {
     await updateDoc(doc(db, currentCollection, currentEditId), { nama: newNama });
     showManualNotif("Data berhasil diupdate!", "green");
     editPopup.style.display = "none";
     loadData(currentCollection);
-  } catch (error) {
-    console.error("Error updating document: ", error);
-  }
+  } catch (error) { console.error("Error updating document: ", error); }
 });
+cancelEditBtn.addEventListener("click", () => { editPopup.style.display = "none"; });
 
-// 🔹 Cancel Edit
-cancelEditBtn.addEventListener("click", () => {
-  editPopup.style.display = "none";
-});
-
-// 🔹 Open Delete Popup
+// 🔹 Delete Popup
 function openDeletePopup(id, nama) {
   currentDeleteId = id;
   deleteNamaText.innerText = `Data: ${nama}`;
   deletePopup.style.display = "flex";
 }
-
-// 🔹 Confirm Delete
 confirmDeleteBtn.addEventListener("click", async () => {
   try {
     await deleteDoc(doc(db, currentCollection, currentDeleteId));
     showManualNotif("Data berhasil dihapus!", "red");
     deletePopup.style.display = "none";
     loadData(currentCollection);
-  } catch (error) {
-    console.error("Error deleting document:", error);
-  }
+  } catch (error) { console.error("Error deleting document:", error); }
 });
+cancelDeleteBtn.addEventListener("click", () => { deletePopup.style.display = "none"; });
 
-// 🔹 Cancel Delete
-cancelDeleteBtn.addEventListener("click", () => {
-  deletePopup.style.display = "none";
-});
-
-// 🔹 Open Add Popup
-openAddBtn.addEventListener("click", () => {
-  addNamaInput.value = "";
-  addPopup.style.display = "flex";
-});
+// 🔹 Add Popup
+openAddBtn.addEventListener("click", () => { addNamaInput.value = ""; addPopup.style.display = "flex"; });
 saveAddBtn.addEventListener("click", async () => {
   const newNama = addNamaInput.value.trim();
-  if (!newNama) {
-    showManualNotif("Nama tidak boleh kosong!", "orange");
-    return;
-  }
+  if (!newNama) { showManualNotif("Nama tidak boleh kosong!", "orange"); return; }
+
+  // Cek duplikat
+  const existing = allData.find(d => d.nama.toLowerCase() === newNama.toLowerCase());
+  if (existing) { showManualNotif("Nama sudah ada, tidak bisa ditambahkan!", "red"); return; }
 
   try {
-    // 🔹 Cek duplikat
-    const existing = allData.find(d => d.nama.toLowerCase() === newNama.toLowerCase());
-    if (existing) {
-      showManualNotif("Nama sudah ada, tidak bisa ditambahkan!", "red");
-      return;
-    }
-
-    // 🔹 Tambahkan data baru
     await addDoc(collection(db, currentCollection), { nama: newNama });
     showManualNotif("Data berhasil ditambahkan!", "green");
     addPopup.style.display = "none";
     loadData(currentCollection);
-  } catch (error) {
-    console.error("Error adding document: ", error);
-  }
+  } catch (error) { console.error("Error adding document: ", error); }
 });
+cancelAddBtn.addEventListener("click", () => { addPopup.style.display = "none"; });
 
-// 🔹 Cancel Add
-cancelAddBtn.addEventListener("click", () => {
-  addPopup.style.display = "none";
-});
-
-// 🔹 Tombol Filter
+// 🔹 Filter Buttons
 filterButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    const collectionName = btn.dataset.collection;
-    loadData(collectionName);
-  });
+  btn.addEventListener("click", () => loadData(btn.dataset.collection));
 });
 
 // 🔹 Load default
 loadData("merek");
 
-// 🔹 Ambil elemen infoData
+// 🔹 Refresh Note
 const statusEl = document.getElementById("infoData");
 
-// 🔹 Buat teks refresh sekali saja (selalu tampil di atas statusEl)
 function setupRefreshNote() {
   let refreshContainer = document.getElementById("refresh-container");
   if (!refreshContainer) {
     refreshContainer = document.createElement("div");
     refreshContainer.id = "refresh-container";
-    refreshContainer.style.marginBottom = "10px"; // beri jarak
+    refreshContainer.style.marginBottom = "10px";
     refreshContainer.innerHTML = `
       <span id="refresh-note" style="font-size:0.9em; color:#555;">
         ⏳ Jika lebih dari 5 detik data belum muncul, tekan 
@@ -274,5 +240,4 @@ function setupRefreshNote() {
   }
 }
 
-// panggil sekali saat halaman load
 setupRefreshNote();

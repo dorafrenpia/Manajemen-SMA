@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah No.Organisasi - IT</title>
+  <link rel="stylesheet" href="/Main/dashboard_admin.css">
+  <link rel="stylesheet" href="/IT/add-nisn.css">
+  <link rel="stylesheet" href="/IT/tabledata.css">
+  <link rel="stylesheet" href="/IT/sortbutton.css">
+  <link rel="stylesheet" href="/IT/SidePopUp.css">
+  <link rel="stylesheet" href="/IT/Buttoninput.css">
+  <link rel="stylesheet" href="/css/refresh.css">
+  <link rel="stylesheet" href="/css/buttonhover.css">
+  <link rel="stylesheet" href="/css/link.css">
+  <style>
+    body { font-family: Arial, sans-serif; }
+    button { padding: 6px 12px; border-radius: 5px; cursor: pointer; }
+    .status-aktif { color: green; font-weight: bold; }
+    .status-tidak-aktif { color: red; font-weight: bold; }
+    .delete-users-btn, .delete-all-btn { padding: 4px 8px; color: #fff; border: none; border-radius: 4px; cursor: pointer; transition: background 0.3s; }
+    .delete-users-btn { background-color: #e67e22; margin-right: 5px; }
+    .delete-users-btn:hover { background-color: #d35400; }
+    .delete-all-btn { background-color: #e74c3c; }
+    .delete-all-btn:hover { background-color: #c0392b; }
+    .containerForm { padding: 20px; border-radius: 8px; width: 100%; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
+    .header-with-img { display: flex; align-items: center; gap: 10px; }
+    .header-logo { width: 90px; height: auto; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+      <h1 class="header-with-img">
+        <img src="../favicon.png" alt="Logo" class="header-logo">
+        <a href="IT.html">Manajemen Gudang - IT</a>
+      </h1>
+      <nav style="display: flex; gap: 15px; align-items: center;">
+        <a href="IT.html">Murid</a>
+        <a href="/IT/IT_Guru.html">Guru</a>
+        <a href="/IT/IT_Organisasi.html">Organisasi</a>
+        <a href="/AdminMain/register_admin.html">Users</a>
+        <button onclick="logout()" style="font-weight: bold; padding:6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main>
+    <div class="containerForm">
+      <h2>Tambah No.Organisasi Baru</h2>
+
+      <!-- Input No.Organisasi -->
+      <input type="text" id="orgInput" placeholder="Masukkan No.Organisasi">
+      <button id="addOrgBtn">Tambah No.Organisasi</button>
+      
+      <!-- Link kembali -->
+      <div class="link-container" style="margin-top:10px;">
+        <span class="link-text" onclick="window.location.href='IT.html'">
+          Kembali ke Dashboard
+        </span>
+      </div>
+
+      <!-- Info Data & Search -->
+      <div id="infoData"></div>
+      <div id="searchContainer"></div>
+      <div class="containerForm2"></div>
+
+      <!-- Table No.Organisasi -->
+      <div class="table-container">
+        <table id="orgTable">
+          <thead>
+  <tr>
+    <th>No <button class="sort-btn small-sort" data-column="no">⇅</button></th>
+    <th>No.Organisasi <button class="sort-btn small-sort" data-column="nomor">⇅</button></th>
+    <th>Nama Pendaftar <button class="sort-btn" data-column="nama">⇅</button></th>
+    <th>Nama Ketua <button class="sort-btn small-sort" data-column="ketua">⇅</button></th>
+    <th>Email <button class="sort-btn small-sort" data-column="email">⇅</button></th>
+    <th>STATUS <button class="sort-btn small-sort" data-column="status">⇅</button></th>
+    <th>Tanggal Input</th>
+    <th>Aksi</th>
+  </tr>
+</thead>
+
+          <tbody>
+            <!-- Data akan diisi lewat JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Popup -->
+      <div id="popup" class="popup"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>
+  </footer>
+
+  <!-- Script JS -->
+  <script type="module" src="/IT/IT_Organisasi.js"></script>
+  <script type="module" src="/js/firebase.js"></script>
+  <script type="module" src="/js/drive.js"></script>
+  <script type="module" src="/js/app.js"></script>
+  <script type="module" src="/js/proteksi.js"></script>
+  
+</body>
+</html>

@@ -1,0 +1,71 @@
+#refresh-note {
+  display: inline-block;
+  background-color: #f0f4f8; /* lembut */
+  color: #333; /* teks jelas */
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: fadeSlide 0.5s ease forwards;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+@keyframes fadeSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effect */
+#refresh-note:hover {
+  transform: scale(1.03); /* sedikit membesar */
+  background-color: #e1e8f0; /* sedikit lebih gelap */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Link refresh */
+#refresh-note .refresh-link {
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+#refresh-note .refresh-link:hover {
+  color: #0056b3;
+}
+/* Animasi khusus refresh link */
+#refresh-note .refresh-link {
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.3s;
+  animation: pulse 1.5s infinite; /* animasi berulang */
+}
+
+/* Hover tetap ada */
+#refresh-note .refresh-link:hover {
+  color: #0056b3;
+  animation: none; /* hentikan pulse saat hover agar tidak mengganggu */
+}
+
+/* Keyframes animasi pulse */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

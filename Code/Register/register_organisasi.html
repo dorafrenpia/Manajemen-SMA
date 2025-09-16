@@ -3,63 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register</title>
+  <title>Register Organisasi</title>
   <link rel="stylesheet" href="/Register/register.css">
 
   <style>
     .back-button {
-  display: block !important;
-  
-  cursor: pointer !important;
-  background-color: #f24545 !important; /* warna merah */
-  border: none !important;
-  transition: 0.2s !important;
-}
-
-.back-button:hover {
- transform: scale(1.05) !important;
-  opacity: 0.8 !important;
-  
-}
-
-.button-login {
-  display: block !important;
-  
-  cursor: pointer !important;
-  background-color:#007bff !important; /* warna merah */
-  border: none !important;
-  transition: 0.2s !important;
-}
-
-.button-login:hover {
-  transform: scale(1.05) !important;
-  opacity: 0.8 !important;
-  
-}
-   .back-button-daftar {
-  display: block !important;
-  
-  cursor: pointer !important;
-  background-color: rgb(20, 159, 20) !important; /* warna merah */
-  border: none !important;
-  margin: 2% 0 2% 0;
-  transition: 0.2s !important;
-}
-
-.back-button-daftar:hover {
-  transform: scale(1.05) !important;
-  opacity: 0.8 !important;
-  
-}
+      display: block !important;
+      cursor: pointer !important;
+      background-color: #f24545 !important;
+      border: none !important;
+      transition: 0.2s !important;
+    }
+    .back-button:hover {
+      transform: scale(1.05) !important;
+      opacity: 0.8 !important;
+    }
+    .button-login {
+      display: block !important;
+      cursor: pointer !important;
+      background-color:#007bff !important;
+      border: none !important;
+      transition: 0.2s !important;
+    }
+    .button-login:hover {
+      transform: scale(1.05) !important;
+      opacity: 0.8 !important;
+    }
+    .back-button-daftar {
+      display: block !important;
+      cursor: pointer !important;
+      background-color: rgb(20, 159, 20) !important;
+      border: none !important;
+      margin: 2% 0 2% 0;
+      transition: 0.2s !important;
+    }
+    .back-button-daftar:hover {
+      transform: scale(1.05) !important;
+      opacity: 0.8 !important;
+    }
   </style>
 </head>
-<body>
+<body> 
+  <img src="../favicon.png" alt="logo" class="bg-logo">
   <div class="container">
-    <h2>Form Registrasi</h2>
-    <form id="registerForm">
-      <input type="text" id="nama" placeholder="Nama Lengkap" required>
-      <input type="text" id="nisn" placeholder="NISN" required>
-      <input type="email" id="email" placeholder="Email" required>
+    <h2>Form Registrasi Organisasi</h2>
+    <form id="orgForm">
+      <input type="text" id="ketua" placeholder="Nama Lengkap Ketua Organisasi" required>
+      <input type="text" id="nomorOrg" placeholder="Nomor Organisasi" required>
+      <input type="text" id="nama" placeholder="Nama Pendaftar" required>
+      <input type="email" id="email" placeholder="Email Pendaftar" required>
       <input type="text" id="telepon" placeholder="No. Telepon" required>
       <input type="password" id="password" placeholder="Password" required>
       <input type="password" id="confirmPassword" placeholder="Konfirmasi Password" required>
@@ -67,13 +59,13 @@
     </form>
 
     <!-- Button Kembali -->
-    <button class="back-button" onclick="window.location.href='register.html'"">Kembali</button>
+    <button class="back-button" onclick="window.location.href='register.html'">Kembali</button>
 
     <!-- Teks & Button Sudah Punya Akun -->
-    <p class="login-text" style="margin-top: 15px;">
+    <p class="login-text" style="display:flex; align-items:center; justify-content:center; gap:10px; font-size:14px; color:#555; font-weight:500; margin-top:15px; font-family:'Segoe UI', sans-serif;">
       Sudah punya akun? 
-      <a href="/Login/login.html">
-        <button type="button" id="loginBtn" class="button-login">Login</button>
+      <a href="/Login/login.html" style="text-decoration:none;">
+        <button type="button" id="loginBtn" class="button-login" style="padding:6px 14px; font-size:13px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition: all 0.3s ease;">Login</button>
       </a>
     </p>
 
@@ -81,6 +73,6 @@
   </div>
 
   <script type="module" src="firebase.js"></script>
-  <script type="module" src="register_murid.js"></script>
+  <script type="module" src="register_organisasi.js"></script>
 </body>
 </html>
