@@ -89,27 +89,30 @@ document.querySelectorAll(".sort-btn").forEach(btn => {
     displayPage(currentPage);
   });
 });
-
 // Tampilkan tabel sesuai table HTML
-function displayPage(page){
+function displayPage(page) {
   orgTableBody.innerHTML = "";
 
+  // Filter data sesuai search
   const filtered = allOrgs.filter(item => {
-    return item.nomor.toLowerCase().includes(searchTerm) || item.nama.toLowerCase().includes(searchTerm) || item.ketua.toLowerCase().includes(searchTerm);
+    return item.nomor.toLowerCase().includes(searchTerm) ||
+           item.nama.toLowerCase().includes(searchTerm) ||
+           item.ketua.toLowerCase().includes(searchTerm);
   });
 
-  const start = (page-1)*pageSize;
+  const start = (page - 1) * pageSize;
   const end = Math.min(start + pageSize, filtered.length);
 
-  filtered.slice(start,end).forEach((item, index) => {
+  // Tampilkan baris
+  filtered.slice(start, end).forEach((item, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${start+index+1}</td>
+      <td>${start + index + 1}</td>
       <td>${item.nomor}</td>
       <td>${item.nama}</td>
       <td>${item.ketua}</td>
       <td>${item.email}</td>
-      <td class="${item.status==="Aktif"?"status-aktif":"status-tidak-aktif"}">${item.status}</td>
+      <td class="${item.status === "Aktif" ? "status-aktif" : "status-tidak-aktif"}">${item.status}</td>
       <td>${item.tanggalInput}</td>
       <td>
         <button class="delete-users-btn" data-org="${item.nomor}">User</button>
@@ -119,8 +122,18 @@ function displayPage(page){
     orgTableBody.appendChild(row);
   });
 
-  prevBtn.disabled = page===1;
-  nextBtn.disabled = end>=filtered.length;
+  // 🔹 Tampilkan info status
+  if (typeof infoContainer !== "undefined" && infoContainer) {
+    let circleColor = filtered.length > 0 ? "#28a745" : "#dc3545"; // hijau jika ada, merah jika kosong
+    infoContainer.innerHTML = `
+      <span class="status-circle" style="display:inline-block; width:10px; height:10px; border-radius:50%; background-color: ${circleColor}; margin-right:5px;"></span>
+      Menampilkan ${start + 1}-${end} dari ${filtered.length} data
+    `;
+  }
+
+  // Pagination
+  prevBtn.disabled = page === 1;
+  nextBtn.disabled = end >= filtered.length;
 }
 
 // Search input
@@ -218,3 +231,21 @@ addOrgBtn.addEventListener("click", async ()=>{
   await fetchAllOrgs();
   displayPage(currentPage);
 })();
+function setupRefreshNote() {
+  let refreshContainer = document.getElementById("refresh-container");
+  if (!refreshContainer) {
+    refreshContainer = document.createElement("div");
+    refreshContainer.id = "refresh-container";
+    refreshContainer.style.marginBottom = "10px";
+    refreshContainer.innerHTML = `
+      <span id="refresh-note" style="font-size:0.9em; color:#555;">
+        ⏳ Jika lebih dari 5 detik data belum muncul, tekan 
+        <span class="refresh-link" style="color:#007bff; cursor:pointer;" onclick="location.reload()">refresh</span>
+      </span>
+    `;
+    
+    // Ganti statusEl dengan container yang pasti ada, misal searchContainer
+    searchContainer.parentElement.insertBefore(refreshContainer, searchContainer);
+  }
+}
+setupRefreshNote();

@@ -6,8 +6,21 @@
   <title>Login</title>
   <link rel="icon" href="../favicon.png" type="image/x-icon">
   <link rel="stylesheet" href="/Login/login.css">
+   <link rel="stylesheet" href="/css/footer.css">
+   <style>
+    body {
+  font-family: Arial;
+  background:#f0f4f7;
+  display: flex;
+  flex-direction: column;   /* tambahkan ini */
+  min-height: 100vh;        /* biar full tinggi layar */
+  justify-content: center;  /* hapus ini */
+  align-items: center;      /* hapus ini */
+}
+   </style>
 </head>
 <body>
+  <main>
   <!-- Logo nyata di belakang -->
   <img src="../favicon.png" alt="logo" class="bg-logo">
 
@@ -26,8 +39,16 @@
 
     <div id="popup"></div>
   </div>
+    </main>
+
+
+      <footer>
+    <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>
+  </footer>
 
   <script type="module" src="/Login/login.js"></script>
   
+    
+
 </body>
 </html>

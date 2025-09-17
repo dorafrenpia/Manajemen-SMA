@@ -1,0 +1,24 @@
+
+
+main {
+  flex: 1;                  /* isi area kosong */
+  display: flex;
+  justify-content: center;
+  align-items: center;      /* login form tetap ke tengah */
+  padding: 40px 20px;
+}
+
+  body {
+      font-family: Arial;
+      background:#f0f4f7;
+      display: flex;
+      flex-direction: column; /* kolom supaya footer di bawah */
+      min-height: 100vh;
+    }
+footer {
+  background-color: #f1f3f6;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 14px;
+  color: #777;
+}

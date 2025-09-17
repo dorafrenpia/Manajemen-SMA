@@ -102,14 +102,6 @@ nav a.active::after {
   width: 100%;
 }
 
-/* Main */
-main {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 40px 20px;
-}
 
 /* Dashboard container */
 .dashboard-container {
@@ -190,15 +182,6 @@ button:hover {
   line-height: 1;
 }
 
-/* Footer */
-footer {
-  background-color: #f1f3f6;
-  text-align: center;
-  padding: 15px 0;
-  font-size: 14px;
-  color: #777;
-  margin-top: auto;
-}
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -100,28 +100,27 @@ document.querySelectorAll(".sort-btn").forEach(btn => {
     displayPage(currentPage); // tampilkan halaman saat ini
   });
 });
-
-// ── Tampilkan tabel per halaman ──
-function displayPage(page){
+function displayPage(page) {
   guruTableBody.innerHTML = "";
 
-  const filteredData = allGuru.filter(item=>{
-    const nama = item.usersList.length>0 ? item.usersList[0].nama.toLowerCase() : "";
-    return item.nomor.toLowerCase().includes(searchTerm) || nama.includes(searchTerm);
+  const term = searchTerm.toLowerCase();
+  const filteredData = allGuru.filter(item => {
+    const nama = item.usersList.length > 0 ? item.usersList.map(u => u.nama.toLowerCase()).join(" ") : "";
+    return item.nomor.toLowerCase().includes(term) || nama.includes(term);
   });
 
-  const start = (page-1)*pageSize;
-  const end = Math.min(start+pageSize, filteredData.length);
-  const pageData = filteredData.slice(start,end);
+  const start = (page - 1) * pageSize;
+  const end = Math.min(start + pageSize, filteredData.length);
+  const pageData = filteredData.slice(start, end);
 
-  pageData.forEach((item,index)=>{
+  pageData.forEach((item, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${start+index+1}</td>
+      <td>${start + index + 1}</td>
       <td>${item.nomor}</td>
-      <td>${item.usersList.length>0 ? item.usersList.map(u=>u.nama).join("<br>") : "-"}</td>
-      <td>${item.usersList.length>0 ? item.usersList.map(u=>u.email).join("<br>") : "-"}</td>
-      <td class="${item.status==="Aktif"?"status-aktif":"status-tidak-aktif"}">${item.status}</td>
+      <td>${item.usersList.length > 0 ? item.usersList.map(u => u.nama).join("<br>") : "-"}</td>
+      <td>${item.usersList.length > 0 ? item.usersList.map(u => u.email).join("<br>") : "-"}</td>
+      <td class="${item.status === "Aktif" ? "status-aktif" : "status-tidak-aktif"}">${item.status}</td>
       <td>${formatDate(item.tanggalInput)}</td>
       <td>
         <button class="delete-users-btn" data-guru="${item.nomor}">User</button>
@@ -131,9 +130,19 @@ function displayPage(page){
     guruTableBody.appendChild(row);
   });
 
-  prevBtn.disabled = page===1;
-  nextBtn.disabled = end>=filteredData.length;
+  // 🔹 Tampilkan info status
+  if (typeof infoContainer !== "undefined" && infoContainer) {
+    const circleColor = filteredData.length > 0 ? "#28a745" : "#dc3545"; // hijau jika ada, merah jika kosong
+    infoContainer.innerHTML = `
+      <span class="status-circle" style="display:inline-block; width:10px; height:10px; border-radius:50%; background-color: ${circleColor}; margin-right:5px;"></span>
+      Menampilkan ${filteredData.length === 0 ? 0 : start + 1}-${end} dari ${filteredData.length} data
+    `;
+  }
+
+  prevBtn.disabled = page === 1;
+  nextBtn.disabled = end >= filteredData.length;
 }
+
 
 // ── Event Tambah No.Guru ──
 addGuruBtn.addEventListener("click", async ()=>{
@@ -251,3 +260,21 @@ guruTableBody.addEventListener("click", async (e)=>{
   await fetchAllGuru();
   displayPage(currentPage);
 })();
+function setupRefreshNote() {
+  let refreshContainer = document.getElementById("refresh-container");
+  if (!refreshContainer) {
+    refreshContainer = document.createElement("div");
+    refreshContainer.id = "refresh-container";
+    refreshContainer.style.marginBottom = "10px";
+    refreshContainer.innerHTML = `
+      <span id="refresh-note" style="font-size:0.9em; color:#555;">
+        ⏳ Jika lebih dari 5 detik data belum muncul, tekan 
+        <span class="refresh-link" style="color:#007bff; cursor:pointer;" onclick="location.reload()">refresh</span>
+      </span>
+    `;
+    
+    // Ganti statusEl dengan container yang pasti ada, misal searchContainer
+    searchContainer.parentElement.insertBefore(refreshContainer, searchContainer);
+  }
+}
+setupRefreshNote();

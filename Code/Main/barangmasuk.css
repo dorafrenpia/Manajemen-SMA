@@ -166,15 +166,6 @@ button:hover {
   word-wrap: break-word; /* fleksibel */
 }
 
-/* Footer */
-footer {
-  background-color: #f1f3f6;
-  text-align: center;
-  padding: 15px 0;
-  font-size: 14px;
-  color: #777;
-  margin-top: auto;
-}
 
 /* Popup fleksibel di kanan */
 #popup {

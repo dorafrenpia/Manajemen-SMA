@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
   <link rel="stylesheet" href="/Register/register.css">
+    <link rel="stylesheet" href="/css/footer.css">
 
   <style>
     .back-button {
@@ -15,7 +16,13 @@
   border: none !important;
   transition: 0.2s !important;
 }
-
+ body {
+      font-family: Arial;
+      background:#f0f4f7;
+      display: flex;
+      flex-direction: column; /* kolom supaya footer di bawah */
+      min-height: 100vh;
+    }
 .back-button:hover {
  transform: scale(1.05) !important;
   opacity: 0.8 !important;
@@ -53,7 +60,7 @@
 }
   </style>
 </head>
-<body> <img src="../favicon.png" alt="logo" class="bg-logo">
+<body><main> <img src="../favicon.png" alt="logo" class="bg-logo">
   <div class="container">
     <h2>Form Registrasi</h2>
     <form id="registerForm">
@@ -80,7 +87,10 @@
 
     <p id="status"></p>
   </div>
-
+ </main>
+  <footer>
+    <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>
+  </footer>
   <script type="module" src="firebase.js"></script>
   <script type="module" src="register_murid.js"></script>
 </body>
