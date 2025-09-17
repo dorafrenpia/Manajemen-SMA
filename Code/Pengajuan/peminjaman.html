@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Barang Masuk</title>
+  <link rel="stylesheet" href="/Main/barangmasuk.css">
+  <link rel="stylesheet" href="/css/refresh.css">
+  <link rel="stylesheet" href="/css/link.css">  
+  <link rel="stylesheet" href="/css/footer.css">  
+  <link rel="stylesheet" href="/css/buttonhover.css">
+  <link rel="stylesheet" href="/Pengajuan/peminjaman.css"> <!-- pisahan css kamera -->
+  
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<header>
+  <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+    <h1 class="header-with-img">
+      <img src="../favicon.png" alt="Logo" class="header-logo">
+      <a href="/Pengajuan/Dashboard_Users.html">Manajemen Gudang - Users</a>
+    </h1>
+    <nav style="display: flex; gap: 15px; align-items: center;">
+      <a href="/Pengajuan/Dashboard_Users.html">Dashboard</a>
+      <a href="/Pengajuan/peminjaman.html">Peminjaman</a>
+      <a href="/Pengajuan/Pengambilan.html">Pengambilan</a>
+      <a href="/Pengajuan/Informasi.html">Informasi</a>
+      <button class="" onclick="logout()" style="font-weight:bold; padding:6px 12px; background:#e74c3c; color:white; border:none; border-radius:5px; cursor:pointer;">
+        Logout
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="form-container">
+    <h2>Form Input Peminjaman</h2>
+    <form id="barangForm">
+      <input type="text" id="namaPeminjam" placeholder="Nama Peminjam" required>
+      <input type="text" id="kelasInput" placeholder="Kelas / Jabatan" required>
+      <input type="text" id="namaBarang" placeholder="Nama Barang" required>
+      <input type="number" id="jumlahBarang" placeholder="Jumlah Barang" required>
+
+      <div style="display:flex;align-items:center;margin:10px 0;gap:15px;">
+        <p style="margin:0;font-weight:bold;min-width:160px;opacity:0.7;">Tanggal Peminjaman</p>
+        <input type="date" id="tanggalPeminjaman" required style="padding:8px 12px;border:1px solid #ccc;border-radius:8px;font-size:14px;">
+      </div>
+
+      <input type="text" id="keperluanInput" placeholder="Keperluan" required>
+
+      <!-- Kamera dan Foto -->
+      <div id="cameraContainer" style="text-align:center;margin:15px 0;">
+        <p style="font-weight:bold;opacity:0.7;">Ambil Foto Pengambilan (Wajah & Barang)</p>
+        <video id="camera" autoplay playsinline style="width:250px;border:1px solid #ccc;border-radius:8px;"></video>
+
+        <!-- Login Google -->
+        <div style="text-align:center;margin:15px 0;">
+          <button id="loginBtn" style="padding:8px 15px;background:#27ae60;color:white;border:none;border-radius:6px;cursor:pointer;">
+            🔑 Login dengan Google
+          </button>
+        </div>
+
+        <!-- Tombol Ambil Foto -->
+        <div style="margin-top:10px;">
+          <button type="button" id="captureBtn" disabled style="padding:8px 15px;background:#4a90e2;color:white;border:none;border-radius:6px;cursor:not-allowed;opacity:0.6;">
+            📸 Ambil Foto
+          </button>
+        </div>
+
+        <!-- Tombol Upload -->
+        <div style="margin-top:10px;">
+          <button type="button" id="uploadBtn" disabled style="padding:8px 15px;background:#f39c12;color:white;border:none;border-radius:6px;cursor:not-allowed;opacity:0.6;">
+            ☁️ Upload ke Drive
+          </button>
+        </div>
+
+        <canvas id="canvas" style="display:none;"></canvas>
+        <div class="preview-container">
+          <img id="previewImage" alt="Preview Foto">
+        </div>
+
+        <!-- Hidden untuk base64 foto -->
+        <input type="hidden" id="fotoPengambilan" name="fotoPengambilan">
+
+        <p id="uploadInfo" style="font-size:14px;color:#555;margin-top:8px;">
+          📷 Belum ada foto diambil
+        </p>
+      </div>
+
+      <div id="uploadDebug" style="margin-top:5px; color:blue; font-size: 0px;"></div>
+
+      <!-- Submit -->
+      <button type="submit" style="width:100%;padding:12px 15px;margin-top:15px;background:linear-gradient(90deg,#4a90e2,#357abd);color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:16px;cursor:pointer;">
+        Simpan
+      </button>
+    </form>
+
+    <div id="status">⏳ Mengecek koneksi Firestore...</div>
+    <div id="popup"></div>
+  </div>
+</main>
+
+<!-- Modal Foto Besar -->
+<div id="imageModal">
+  <span id="closeModal">&times;</span>
+  <img id="modalImage" src="">
+</div>
+
+<footer>
+  <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>
+</footer>
+
+<!-- JS -->
+<script type="module" src="/js/firebase.js"></script>
+<script type="module" src="/js/drive_pengajuan.js"></script>
+<script type="module" src="/js/app.js"></script>
+<script type="module" src="/js/proteksi.js"></script>
+<script type="module" src="/js/preview.js"></script>
+<script type="module" src="/Pengajuan/Peminjaman.js"></script>
+<script type="module">
+const previewImage = document.getElementById("previewImage");
+const imageModal = document.getElementById("imageModal");
+const modalImage = document.getElementById("modalImage");
+const closeModal = document.getElementById("closeModal");
+
+// Tampilkan preview saat foto diambil
+function tampilkanPreview(file) {
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      previewImage.src = e.target.result;
+      previewImage.style.display = "block";
+      modalImage.src = e.target.result; // untuk modal
+      document.getElementById("uploadInfo").textContent = "✅ Foto Pengambilan berhasil dipilih";
+
+      // Simpan base64 di hidden input agar bisa muncul lagi
+      document.getElementById("fotoPengambilan").value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    previewImage.style.display = "none";
+    document.getElementById("uploadInfo").textContent = "📷 Belum ada foto diupload";
+  }
+}
+
+// Klik preview untuk buka modal fullscreen
+previewImage.addEventListener("click", () => {
+  imageModal.style.display = "flex";
+  modalImage.src = previewImage.src;
+});
+
+// Tutup modal
+closeModal.addEventListener("click", () => {
+  imageModal.style.display = "none";
+});
+
+// Event listener input file / camera capture
+const fotoPengambilan = document.getElementById("fotoPengambilan");
+fotoPengambilan.addEventListener("change", () => {
+  tampilkanPreview(fotoPengambilan.files[0]);
+});
+
+// =======================
+// Fitur Upload + Hide Preview
+// =======================
+const uploadBtn = document.getElementById("uploadBtn");
+
+// Simulasi fungsi upload (ganti dengan fungsi Drive asli)
+async function uploadFoto(base64) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("✅ Foto berhasil diupload (simulasi)");
+      resolve(true);
+    }, 1000);
+  });
+}
+
+uploadBtn.addEventListener("click", async () => {
+  const base64 = document.getElementById("fotoPengambilan").value;
+  if (!base64) {
+    alert("Belum ada foto untuk diupload!");
+    return;
+  }
+
+  uploadBtn.disabled = true;
+  uploadBtn.textContent = "Uploading...";
+  const berhasil = await uploadFoto(base64);
+  uploadBtn.textContent = "☁️ Upload ke Drive";
+  uploadBtn.disabled = false;
+
+  if (berhasil) {
+    // Hide preview setelah upload
+    previewImage.style.display = "none";
+    document.getElementById("uploadInfo").textContent = "📷 Foto sudah diupload, preview disembunyikan";
+  }
+});
+
+// Fungsi untuk menampilkan preview lagi dari base64
+function showPreview() {
+  const base64 = document.getElementById("fotoPengambilan").value;
+  if (base64) {
+    previewImage.src = base64;
+    previewImage.style.display = "block";
+    modalImage.src = base64;
+    document.getElementById("uploadInfo").textContent = "📷 Preview ditampilkan lagi";
+  }
+}
+
+// Contoh trigger: bisa dipanggil dari tombol lain
+// showPreview();
+</script>
+
+</body>
+</html>

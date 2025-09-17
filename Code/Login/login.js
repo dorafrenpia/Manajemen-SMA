@@ -93,7 +93,7 @@ window.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("role", "user");
         showPopup("Login berhasil! Mengarahkan ke dashboard...", "success", 2000);
-        setTimeout(() => { window.location.href = "/Main/dashboard_user.html"; }, 2000);
+        setTimeout(() => { window.location.href = "/Pengajuan/Dashboard_Users.html"; }, 2000);
 
       } catch (authErr) {
         console.log("❌ Login Firebase gagal:", authErr);

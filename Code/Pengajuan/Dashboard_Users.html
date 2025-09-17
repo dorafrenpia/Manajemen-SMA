@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - Barang Masuk</title>
+  <link rel="stylesheet" href="/Main/dashboard_admin.css">
+  <link rel="stylesheet" href="/css/refresh.css">
+    <link rel="stylesheet" href="/css/footer.css">  
+  <link rel="stylesheet" href="/css/link.css">
+     <link rel="stylesheet" href="/css/buttonhover.css">
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .sort-btn { cursor: pointer; margin-left: 5px; }
+    button { padding: 6px 12px; border-radius: 5px; cursor: pointer; }
+    .header-with-img {
+    display: flex;
+    align-items: center;  /* teks dan gambar sejajar vertikal */
+    gap: 10px;            /* jarak antara gambar dan teks */
+    }
+    .header-logo {
+    width: 90px;          /* sesuaikan ukuran gambar */
+    height: auto;
+    }
+  </style>
+</head>
+<body>
+<header>
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+     <h1 class="header-with-img">
+  <img src="../favicon.png" alt="Logo" class="header-logo">
+  <a href="/Pengajuan/Dashboard_Users.html">Manajemen Gudang - Users</a>
+</h1>
+      <nav style="display: flex; gap: 15px; align-items: center;">
+        <a href="/Pengajuan/Dashboard_Users.html">Dashboard</a>
+        
+        <a href="/Pengajuan/peminjaman.html">Peminjaman</a>
+        <a href="/Pengajuan/Pengambilan.html">Pengambilan</a>
+        
+        <a href="/Pengajuan/Informasi.html">Informasi</a>
+        
+        <button clas onclick="logout()" style="font-weight:  bold;padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+          Logout
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="dashboard-container">
+      <h2>Dashboard Peminjaman</h2>
+      <div id="status">⏳ Memuat data...</div>
+
+<button id="openFilter" class="filter-btn">Filter</button>
+      <!-- 🔹 Popup Modal Filter -->
+      <div id="filterModal" class="modal">
+        <div class="modal-content">
+          <span id="closeFilter" class="close">&times;</span>
+          <div class="filter-container">
+            <h3>Filter Data Barang</h3>
+            <label for="searchInput">Cari Barang (Kode / Nama / Merek):</label>
+            <input type="text" id="searchInput" placeholder="Ketik kode, nama, atau merek...">
+            <label for="searchTanggalBarang">Tanggal Barang:</label>
+            <input type="date" id="searchTanggalBarang">
+            <label for="searchTanggalInput">Tanggal Input Sistem:</label>
+            <input type="date" id="searchTanggalInput">
+          </div>
+        </div>
+      </div>
+
+    <!-- 🔹 Tabel Peminjaman -->
+<div class="table-container">
+  <table id="peminjamanTable">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Tanggal Peminjaman <button class="sort-btn">⇅</button></th>
+        <th>Nama Peminjam <button class="sort-btn">⇅</button></th>
+        <th>Kelas / Jabatan <button class="sort-btn">⇅</button></th>
+        <th>Nama Barang <button class="sort-btn">⇅</button></th>
+        <th>Jumlah Barang <button class="sort-btn">⇅</button></th>
+        <th>Keperluan</th>
+        <th>Foto Pengambilan (Wajah & Barang)</th>
+        <th>Foto Pengembalian (Wajah & Barang)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>
+  </footer>
+
+  <!-- Modal Edit -->
+  <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    <div style="background:white; padding:20px; border-radius:8px; width:400px; position:relative;">
+      <h3>Edit Barang</h3>
+      <form id="editForm">
+        <div><label>Kode Barang:</label> <span id="editKode"></span></div>
+        <div><label>Nama Barang:</label> <input type="text" id="editNama" required></div>
+        <div><label>Merek:</label> <input type="text" id="editMerek" required></div>
+        <div><label>Jumlah:</label> <input type="number" id="editJumlah" required></div>
+        
+        <div><label>Tanggal:</label> <input type="date" id="editTanggal"></div>
+        <div><label>Kategori:</label> <input type="text" id="editKategori"></div>
+        <div><label>Satuan:</label> <input type="text" id="editSatuan"></div>
+        <div><label>Jenis Dana:</label> <input type="text" id="editDana"></div>
+        <div><label>Keterangan:</label> <input type="text" id="editKeterangan"></div>
+        <div style="margin-top:10px; text-align:right;">
+          <button type="button" id="cancelEdit">❌ Cancel</button>
+          <button type="submit">✔️ Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+
+
+  <!-- Modul JS Lain -->
+  <script type="module" src="/Pengajuan/Peminjaman.js"></script>
+  <script type="module" src="/js/firebase.js"></script>
+  <script type="module" src="/js/drive.js"></script>
+  <script type="module" src="/js/app.js"></script>
+  <script type="module" src="/js/proteksi.js"></script>
+  
+
+</body>
+</html>
