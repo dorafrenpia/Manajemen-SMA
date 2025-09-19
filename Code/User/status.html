@@ -26,6 +26,59 @@
     }
     .status-container p { margin: 5px 0; }
     button { padding: 6px 12px; border-radius: 5px; cursor: pointer; }
+    /* Style khusus untuk info user */
+.profile-info p {
+  background: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin: 6px 0;
+  font-size: 14px;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-left: 4px solid #3498db;
+}
+
+.profile-info p strong {
+  color: #2c3e50;
+  margin-right: 5px;
+}
+/* Style untuk info profil */
+.profile-info p {
+  background: #f9f9f9;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-left: 4px solid #3498db;
+  transition: all 0.3s ease; /* buat animasi */
+  cursor: pointer; /* biar keliatan interaktif */
+}
+
+/* Animasi saat hover */
+.profile-info p:hover {
+  transform: translateX(6px) scale(1.02);
+  background: #eef6ff;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  border-left-color: #1d6fa5;
+}
+
+/* Style untuk teks label */
+.profile-info p strong {
+  color: #2c3e50;
+  margin-right: 6px;
+}
+
+/* Responsif untuk HP */
+@media (max-width: 600px) {
+  .profile-info p {
+    font-size: 13px;
+    padding: 10px 12px;
+    margin: 6px 0;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -33,13 +86,16 @@
     <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
      <h1 class="header-with-img">
   <img src="../favicon.png" alt="Logo" class="header-logo">
-  <a href="/Main/dashboard_admin.html">Manajemen Gudang - Admin</a>
+  <a href="/Pengajuan/Dashboard_Users.html">Manajemen Gudang - Users</a>
 </h1>
       <nav style="display: flex; gap: 15px; align-items: center;">
-        <a href="/Main/dashboard_admin.html">Dashboard</a>
-        <a href="/Main/barangmasuk.html">Barang Masuk</a>
-        <a href="/Main/List.html">Permintaan</a>
-        <a href="/Dropdown/dropdown.html">Dropdown</a>
+        <a href="/Pengajuan/Dashboard_Users.html">Dashboard</a>
+        
+        <a href="/Pengajuan/peminjaman.html">Peminjaman</a>
+        <a href="/Pengajuan/Pengambilan.html">Pengambilan</a>
+        
+        <a href="/User/status.html">Informasi</a>
+        
         <button clas onclick="logout()" style="font-weight:  bold;padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
           Logout
         </button>
@@ -51,21 +107,24 @@
     <h2>Status Login</h2>
 <div style="text-align:left;">
     <div id="statusContainer" class="status-container">
-      <p><strong>Nama:</strong> <span id="nama"></span></p>
-      <p><strong>Email:</strong> <span id="email"></span></p>
-      <p><strong>Nomor HP:</strong> <span id="telepon"></span></p>
-      <p><strong>Role:</strong> <span id="role"></span></p>
-      <p><strong>Dibuat pada:</strong> <span id="createdAt"></span></p>
+      <div class="profile-info">
+  <p><strong>Nama:</strong> <span id="nama"></span></p>
+  <p><strong>Email:</strong> <span id="email"></span></p>
+  <p><strong>Nomor HP:</strong> <span id="telepon"></span></p>
+  <p><strong>Sebagai:</strong> <span id="role"></span></p>
+  <p><strong>Dibuat pada:</strong> <span id="createdAt"></span></p>
 
-      <!-- Tambahan untuk User -->
-      <p id="nisnRow" style="display:none;"><strong>NISN:</strong> <span id="nisn"></span></p>
+  <!-- Tambahan untuk User -->
+  <p id="nisnRow" style="display:none;"><strong>NISN:</strong> <span id="nisn"></span></p>
 
-      <!-- Tambahan untuk Organisasi -->
-      <p id="nomorOrgRow" style="display:none;"><strong>Nomor Organisasi:</strong> <span id="nomorOrg"></span></p>
-      <p id="ketuaRow" style="display:none;"><strong>Nama Ketua:</strong> <span id="ketua"></span></p>
+  <!-- Tambahan untuk Organisasi -->
+  <p id="nomorOrgRow" style="display:none;"><strong>Nomor Organisasi:</strong> <span id="nomorOrg"></span></p>
+  <p id="ketuaRow" style="display:none;"><strong>Nama Ketua:</strong> <span id="ketua"></span></p>
 
-      <!-- Tambahan untuk Guru -->
-      <p id="nomorRow" style="display:none;"><strong>Nomor Guru:</strong> <span id="nomor"></span></p>
+  <!-- Tambahan untuk Guru -->
+  <p id="nomorRow" style="display:none;"><strong>Nomor Guru:</strong> <span id="nomor"></span></p>
+</div>
+
     </div>
   </div>
   </div>
