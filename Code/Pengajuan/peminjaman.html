@@ -55,9 +55,10 @@
 
         <!-- Login Google -->
         <div style="text-align:center;margin:15px 0;">
-          <button id="loginBtn" style="padding:8px 15px;background:#27ae60;color:white;border:none;border-radius:6px;cursor:pointer;">
-            🔑 Login dengan Google
-          </button>
+         <button type="button" id="loginBtn" style="padding:8px 15px;background:#27ae60;color:white;border:none;border-radius:6px;cursor:pointer;">
+  🔑 Login dengan Google
+</button>
+
         </div>
 
         <!-- Tombol Ambil Foto -->
@@ -99,12 +100,14 @@
     <div id="popup"></div>
   </div>
 </main>
+<input type="hidden" id="dataImageBase" name="dataImageBase">
 
 <!-- Modal Foto Besar -->
 <div id="imageModal">
   <span id="closeModal">&times;</span>
   <img id="modalImage" src="">
 </div>
+<span id="email" style="display:none;">user@example.com</span>
 
 <footer>
   <p>© 2025 IT Support Dharma Loka. All rights reserved.</p>

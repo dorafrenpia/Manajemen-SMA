@@ -38,7 +38,7 @@ window.updateLoginButton = function () {
   if (!loginBtn) return;
 
   if (isLoggedInDrive) {
-    loginBtn.textContent = "Logout Google Drive";
+    loginBtn.textContent = "🔑 Logout Google Drive";
     loginBtn.style.backgroundColor = "red";
     loginBtn.style.color = "white";
     loginBtn.disabled = false;
@@ -53,7 +53,7 @@ window.updateLoginButton = function () {
       uploadDebug.textContent = "🔹 Logout berhasil";
     };
   } else {
-    loginBtn.textContent = "Login Google Drive";
+    loginBtn.textContent = "🔑 Login dengan Google";
     loginBtn.style.backgroundColor = "green";
     loginBtn.style.color = "white";
     loginBtn.disabled = false;

@@ -37,7 +37,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (devData.password === password) {
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("role", devData.role);
-
+  
           if (devData.role.toLowerCase() === "admin") {
             showPopup("Login admin berhasil! Mengarahkan ke dashboard...", "success", 2000);
             setTimeout(() => { window.location.href = "/Main/dashboard_admin.html"; }, 2000);
@@ -72,6 +72,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (!snapOrg.empty) {
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("role", "organisasi");
+            localStorage.setItem("email", email); // ⬅️ tambahkan ini
           showPopup("Login berhasil! Mengarahkan ke dashboard Organisasi...", "success", 2000);
           setTimeout(() => { window.location.href = "/Main/dashboard_organisasi.html"; }, 2000);
           return;
@@ -84,6 +85,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (!snapGuru.empty) {
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("role", "guru");
+            localStorage.setItem("email", email); // ⬅️ tambahkan ini
           showPopup("Login berhasil! Mengarahkan ke dashboard Guru...", "success", 2000);
           setTimeout(() => { window.location.href = "/Main/dashboard_guru.html"; }, 2000);
           return;
@@ -92,6 +94,7 @@ window.addEventListener("DOMContentLoaded", () => {
         // 🔹 Kalau bukan DEV, Organisasi, maupun Guru → user biasa
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("role", "user");
+          localStorage.setItem("email", email); // ⬅️ tambahkan ini
         showPopup("Login berhasil! Mengarahkan ke dashboard...", "success", 2000);
         setTimeout(() => { window.location.href = "/Pengajuan/Dashboard_Users.html"; }, 2000);
 

@@ -6,7 +6,11 @@ const form = document.getElementById("barangForm");
 const statusEl = document.getElementById("status");
 const popup = document.getElementById("popup");
 const fotoPengambilanInput = document.getElementById("fotoPengambilan");
-const sendBtn = form?.querySelector("button[type='submit']"); // tombol simpan
+const sendBtn = form?.querySelector("button[type='submit']");
+
+// 🔹 Ambil email user dari localStorage (login.js sudah simpan)
+const currentUserEmail = localStorage.getItem("email") || "";
+console.log("Email user:", currentUserEmail);
 
 // 🔹 Cek koneksi Firestore
 async function cekKoneksi() {
@@ -22,7 +26,7 @@ cekKoneksi();
 
 // ===== Fungsi enable/disable tombol submit =====
 function updateSubmitButton() {
-  const isPhotoReady = fotoPengambilanInput?.dataset.fileId && fotoPengambilanInput?.dataset.fileLink;
+  const isPhotoReady = window.uploadedPhotos && window.uploadedPhotos.length > 0;
   if (sendBtn) {
     sendBtn.disabled = !isPhotoReady;
     sendBtn.style.opacity = isPhotoReady ? "1" : "0.5";
@@ -32,6 +36,7 @@ function updateSubmitButton() {
 
 // Panggil saat load
 updateSubmitButton();
+
 // ===== Submit Form =====
 if (!form) {
   console.warn("Form 'barangForm' tidak ditemukan di halaman.");
@@ -40,7 +45,7 @@ if (!form) {
     e.preventDefault();
 
     // Pastikan minimal 1 foto sudah di-upload
-    if (!window.uploadedPhotos.length) {
+    if (!window.uploadedPhotos || !window.uploadedPhotos.length) {
       alert("❌ Harus ambil dan upload minimal 1 foto ke Google Drive terlebih dahulu!");
       return;
     }
@@ -64,8 +69,9 @@ if (!form) {
         jumlahBarang,
         tanggalPeminjaman,
         keperluan,
-        fotoPengambilan: window.uploadedPhotos.map(f => f.fileLink), // array link
-        fotoId: window.uploadedPhotos.map(f => f.fileId),             // array ID
+        fotoPengambilan: window.uploadedPhotos.map(f => f.fileLink),
+        fotoId: window.uploadedPhotos.map(f => f.fileId),
+        email: currentUserEmail, // ambil dari localStorage
         createdAt: serverTimestamp()
       });
 
