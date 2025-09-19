@@ -104,3 +104,21 @@ const fotoKembaliHTML =
 
 // Jalankan saat halaman dibuka
 loadPeminjaman();
+// 🔹 Buat teks refresh sekali saja (selalu tampil di atas statusEl)
+function setupRefreshNote() {
+  let refreshContainer = document.getElementById("refresh-container");
+  if (!refreshContainer) {
+    refreshContainer = document.createElement("div");
+    refreshContainer.id = "refresh-container";
+    refreshContainer.innerHTML = `
+      <span id="refresh-note">
+        ⏳ Jika lebih dari 5 detik data belum muncul, tekan 
+        <span class="refresh-link" onclick="location.reload()">refresh</span>
+      </span>
+    `;
+    statusEl.parentElement.insertBefore(refreshContainer, statusEl);
+  }
+}
+
+// panggil sekali saat halaman load
+setupRefreshNote();

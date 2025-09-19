@@ -19,3 +19,9 @@ button {
     opacity: 1;
   }
 }
+/* Tambahkan di <style> */
+.page-btn:disabled {
+  background-color: #ccc;  /* warna pucat */
+  color: #666;
+  cursor: not-allowed;
+}

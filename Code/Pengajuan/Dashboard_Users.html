@@ -46,7 +46,14 @@
   <main>
     <div class="dashboard-container">
       <h2>Dashboard Peminjaman</h2>
-      <div id="status">⏳ Memuat data...</div>
+      <!-- 🔹 Status & Pagination -->
+<div id="status">⏳ Memuat data...</div>
+<div id="pagination" style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
+  <button class="page-btn" id="prevPageBtn">⬅️ Sebelumnya</button>
+  <span id="pageInfo"></span>
+  <button class="page-btn" id="nextPageBtn">Berikutnya ➡️</button>
+</div>
+
 
 <button id="openFilter" class="filter-btn">Filter</button>
       <!-- 🔹 Popup Modal Filter -->
@@ -76,9 +83,11 @@
         <th>Kelas / Jabatan <button class="sort-btn">⇅</button></th>
         <th>Nama Barang <button class="sort-btn">⇅</button></th>
         <th>Jumlah Barang <button class="sort-btn">⇅</button></th>
-        <th>Keperluan</th>
-        <th>Foto Pengambilan (Wajah & Barang)</th>
-        <th>Foto Pengembalian (Wajah & Barang)</th>
+        <th>Keperluan <button class="sort-btn">⇅</button></th>
+        
+        <th>Foto Pengambilan (Wajah & Barang) <button class="sort-btn">⇅</button></th>
+        <th>Foto Pengembalian (Wajah & Barang) <button class="sort-btn">⇅</button></th>
+        
       </tr>
     </thead>
     <tbody></tbody>
@@ -126,6 +135,9 @@
   <script type="module" src="/js/proteksi.js"></script>
   
   <script type="module" src="/Pengajuan/LoadTablePeminjamanUsers.js"></script>
-
+ <script type="module">
+  import { initSortButtons } from '/js/sortbtn.js';
+  initSortButtons("peminjamanTable"); // id tabel
+</script>
 </body>
 </html>
