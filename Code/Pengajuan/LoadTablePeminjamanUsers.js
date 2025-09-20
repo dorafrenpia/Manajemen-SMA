@@ -65,8 +65,6 @@ function extractHttpsAll(value) {
 
   return hasil;
 }
-
-// 🔹 Render tabel dengan pagination
 function renderTable(data) {
   tableBody.innerHTML = "";
 
@@ -102,6 +100,13 @@ function renderTable(data) {
             )
             .join(" ")
         : "Tidak ada Foto";
+let barangText = "-";
+if (Array.isArray(item.barangDipinjam) && item.barangDipinjam.length > 0) {
+  barangText = item.barangDipinjam
+    .map(b => `${b.namaBarang || "-"} (${b.jumlahBarang || 0} ${b.satuanBarang || ""})`)
+    .join(", ");
+}
+
 
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -109,8 +114,7 @@ function renderTable(data) {
       <td>${item.tanggalPeminjaman || "-"}</td>
       <td>${item.namaPeminjam || "-"}</td>
       <td>${item.kelasJabatan || "-"}</td>
-      <td>${item.namaBarang || "-"}</td>
-      <td>${item.jumlahBarang || "-"}</td>
+      <td>${barangText}</td>
       <td>${item.keperluan || "-"}</td>
       <td>${fotoAmbilHTML}</td>
       <td>${fotoKembaliHTML}</td>
@@ -126,6 +130,7 @@ function renderTable(data) {
   prevPageBtn.disabled = currentPage === 1;
   nextPageBtn.disabled = currentPage === totalPages;
 }
+
 
 // 🔹 Navigasi
 prevPageBtn.addEventListener("click", () => {

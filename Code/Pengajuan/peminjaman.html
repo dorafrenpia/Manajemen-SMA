@@ -15,6 +15,33 @@
   
   
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+   <style>.tab-btn {
+  padding: 6px 12px;
+  background: #eee;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  flex-shrink: 0; /* biar ga mengecil pas banyak */
+}
+.tab-btn.active {
+  background: #4a90e2;
+  color: white;
+}
+.barang-field input {
+  display: block;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+#barangTabs::-webkit-scrollbar {
+  height: 6px;
+}
+#barangTabs::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 3px;
+}</style>
    
 </head>
 <body>
@@ -68,11 +95,31 @@
           </tbody>
         </table>
       </div>
+<div id="barangSection">
+  <!-- Tab Barang dengan scroll -->
+  <div id="barangTabs" 
+       style="margin-bottom:10px; display:flex; gap:8px; overflow-x:auto; white-space:nowrap; padding-bottom:5px; border-bottom:1px solid #ccc;">
+    <button type="button" class="tab-btn active" data-index="1">Barang 1</button>
+  </div>
 
-      <input type="text" id="namaBarang" placeholder="Nama Barang (Pilih dari table)" readonly>
-      <input type="text" id="satuanBarang" placeholder="Satuan Barang (Pilih dari table)" readonly>
-      <input type="number" id="jumlahBarang" placeholder="Jumlah Barang" required>
+  <!-- Container field barang -->
+  <div id="barangFields">
+    <div class="barang-field" data-index="1">
+      <input type="text" id="namaBarang-1" placeholder="Nama Barang (Pilih dari table)" readonly>
+      <input type="text" id="satuanBarang-1" placeholder="Satuan Barang (Pilih dari table)" readonly>
+      <input type="number" id="jumlahBarang-1" placeholder="Jumlah Barang" required>
+    </div>
+  </div>
 
+  <!-- Tombol tambah barang -->
+  <div style="margin-top:10px;">
+    <button type="button" id="addBarangBtn" 
+      style="padding:6px 12px; background:#27ae60; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+      ➕ Tambah Barang
+    </button>
+  </div>
+</div>
+    
       <div style="display:flex;align-items:center;margin:10px 0;gap:15px;">
         <p style="margin:0;font-weight:bold;min-width:160px;opacity:0.7;">Tanggal Peminjaman</p>
         <input type="date" id="tanggalPeminjaman" required style="padding:8px 12px;border:1px solid #ccc;border-radius:8px;font-size:14px;">
@@ -246,6 +293,52 @@ function showPreview() {
     document.getElementById("uploadInfo").textContent = "📷 Preview ditampilkan lagi";
   }
 }
+let barangCount = 1;
+
+// Fungsi buat tab + field baru
+document.getElementById("addBarangBtn").addEventListener("click", () => {
+  barangCount++;
+
+  // buat tab baru
+  const tabBtn = document.createElement("button");
+  tabBtn.type = "button";
+  tabBtn.className = "tab-btn";
+  tabBtn.dataset.index = barangCount;
+  tabBtn.textContent = "Barang " + barangCount;
+  document.getElementById("barangTabs").appendChild(tabBtn);
+
+  // auto scroll ke kanan (biar tab baru kelihatan)
+  document.getElementById("barangTabs").scrollLeft = document.getElementById("barangTabs").scrollWidth;
+
+  // buat field baru
+  const newField = document.createElement("div");
+  newField.className = "barang-field";
+  newField.dataset.index = barangCount;
+  newField.style.display = "none";
+  newField.innerHTML = `
+    <input type="text" id="namaBarang-${barangCount}" placeholder="Nama Barang (Pilih dari table)" readonly>
+    <input type="text" id="satuanBarang-${barangCount}" placeholder="Satuan Barang (Pilih dari table)" readonly>
+    <input type="number" id="jumlahBarang-${barangCount}" placeholder="Jumlah Barang" required>
+  `;
+  document.getElementById("barangFields").appendChild(newField);
+});
+
+// Event delegation buat klik tab
+document.getElementById("barangTabs").addEventListener("click", e => {
+  if (e.target.classList.contains("tab-btn")) {
+    const idx = e.target.dataset.index;
+
+    // reset semua tab
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+    e.target.classList.add("active");
+
+    // hide semua field
+    document.querySelectorAll(".barang-field").forEach(f => f.style.display = "none");
+
+    // tampilkan field sesuai tab
+    document.querySelector(`.barang-field[data-index="${idx}"]`).style.display = "block";
+  }
+});
 </script>
 
 </body>

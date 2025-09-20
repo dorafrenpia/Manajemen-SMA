@@ -46,6 +46,17 @@ async function loadBarangMasuk() {
   }
 }
 
+// ======================
+// 🔹 TRACK TAB BARANG AKTIF
+// ======================
+let activeBarangIndex = 1; // default Barang 1
+
+// Saat tab diklik, update activeBarangIndex
+document.getElementById("barangTabs").addEventListener("click", e => {
+  if (e.target.classList.contains("tab-btn")) {
+    activeBarangIndex = parseInt(e.target.dataset.index);
+  }
+});
 
 // ======================
 // 🔹 RENDER TABLE + PAGINATION
@@ -76,15 +87,21 @@ function renderTable() {
         <td>${data.jumlahBarang || "-"}</td>
       `;
 
-      // Klik baris → isi Nama Barang & Satuan
-      row.addEventListener("click", () => {
-        document.getElementById("namaBarang").value = data.namaBarang || "";
-        document.getElementById("satuanBarang").value = data.satuan || "";
+     // Klik baris → isi Nama Barang & Satuan di field barang aktif
+row.addEventListener("click", () => {
+  const namaInput = document.getElementById(`namaBarang-${activeBarangIndex}`);
+  const satuanInput = document.getElementById(`satuanBarang-${activeBarangIndex}`);
 
-        // Highlight baris yang dipilih
-        tableBody.querySelectorAll("tr").forEach(r => r.classList.remove("active"));
-        row.classList.add("active");
-      });
+  if (namaInput && satuanInput) {
+    namaInput.value = data.namaBarang || "";
+    satuanInput.value = data.satuan || "";
+  }
+
+  // Highlight baris yang dipilih
+  tableBody.querySelectorAll("tr").forEach(r => r.classList.remove("active"));
+  row.classList.add("active");
+});
+
 
       tableBody.appendChild(row);
     });

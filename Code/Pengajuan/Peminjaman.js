@@ -87,7 +87,6 @@ async function cekStokDanKurangi(namaBarang, jumlahPinjam) {
     return false;
   }
 }
-
 // ===== Submit Form =====
 if (!form) {
   console.warn("Form 'barangForm' tidak ditemukan di halaman.");
@@ -95,7 +94,6 @@ if (!form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Pastikan minimal 1 foto sudah di-upload
     if (!window.uploadedPhotos || !window.uploadedPhotos.length) {
       alert("❌ Harus ambil dan upload minimal 1 foto ke Google Drive terlebih dahulu!");
       return;
@@ -103,34 +101,51 @@ if (!form) {
 
     if (statusEl) statusEl.textContent = "⏳ Menyimpan data...";
 
-    // Ambil data dari form
+    // Data umum
     const namaPeminjam = document.getElementById("namaPeminjam")?.value.trim() || "";
     const kelasJabatan = document.getElementById("kelasInput")?.value.trim() || "";
-    const namaBarang = document.getElementById("namaBarang")?.value.trim() || "";
-    const jumlahRaw = document.getElementById("jumlahBarang")?.value || "0";
-    const jumlahBarang = parseInt(jumlahRaw, 10) || 0;
     const tanggalPeminjaman = document.getElementById("tanggalPeminjaman")?.value || "";
     const keperluan = document.getElementById("keperluanInput")?.value.trim() || "";
 
+    // 🔹 Ambil semua barang dari dynamic field
+    const barangDipinjam = [];
+    document.querySelectorAll(".barang-field").forEach((field, idx) => {
+      const i = field.dataset.index;
+      const namaBarang = document.getElementById(`namaBarang-${i}`)?.value.trim() || "";
+      const satuanBarang = document.getElementById(`satuanBarang-${i}`)?.value.trim() || "";
+      const jumlahRaw = document.getElementById(`jumlahBarang-${i}`)?.value || "0";
+      const jumlahBarang = parseInt(jumlahRaw, 10) || 0;
+
+      if (namaBarang && jumlahBarang > 0) {
+        barangDipinjam.push({ namaBarang, satuanBarang, jumlahBarang });
+      }
+    });
+
+    if (barangDipinjam.length === 0) {
+      alert("❌ Minimal harus ada 1 barang dipinjam!");
+      return;
+    }
+
     try {
-      // 🔹 Cek stok dulu
-      const stokOk = await cekStokDanKurangi(namaBarang, jumlahBarang);
-      if (!stokOk) {
-        if (statusEl) statusEl.textContent = "❌ Gagal karena stok barang tidak cukup.";
-        return; // stop, jangan lanjut simpan
+      // 🔹 Cek stok & kurangi untuk setiap barang
+      for (const item of barangDipinjam) {
+        const stokOk = await cekStokDanKurangi(item.namaBarang, item.jumlahBarang);
+        if (!stokOk) {
+          if (statusEl) statusEl.textContent = `❌ Gagal karena stok ${item.namaBarang} tidak cukup.`;
+          return; // stop langsung kalau ada yang gagal
+        }
       }
 
-      // 🔹 Simpan data peminjaman
+      // 🔹 Simpan data peminjaman ke Firestore
       await addDoc(collection(db, "peminjaman"), {
         namaPeminjam,
         kelasJabatan,
-        namaBarang,
-        jumlahBarang,
         tanggalPeminjaman,
         keperluan,
+        barangDipinjam, // <-- ARRAY barang
         fotoPengambilan: window.uploadedPhotos.map(f => f.fileLink),
         fotoId: window.uploadedPhotos.map(f => f.fileId),
-        email: currentUserEmail, // ambil dari localStorage
+        email: currentUserEmail,
         createdAt: serverTimestamp()
       });
 
@@ -140,8 +155,6 @@ if (!form) {
       </div>`;
 
       form.reset();
-
-      // Reset array foto & input
       window.uploadedPhotos = [];
       if (fotoPengambilanInput) {
         fotoPengambilanInput.value = "";
@@ -149,9 +162,8 @@ if (!form) {
         fotoPengambilanInput.dataset.fileLink = "";
       }
 
-      // Update debug & tombol submit
       window.updateUploadDebug?.();
-      updateSubmitButton(); // tombol submit disable lagi
+      updateSubmitButton();
 
     } catch (error) {
       console.error("❌ Error simpan data:", error);
