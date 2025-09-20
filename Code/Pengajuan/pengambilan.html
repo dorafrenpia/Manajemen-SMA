@@ -4,18 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Input Barang Masuk</title>
-  <link rel="stylesheet" href="/Pengajuan/peminjaman.css"> <!-- pisahan css kamera -->
-  <link rel="stylesheet" href="/Dropdown/table.css">
   <link rel="stylesheet" href="/Main/barangmasuk.css">
   <link rel="stylesheet" href="/css/refresh.css">
   <link rel="stylesheet" href="/css/link.css">  
   <link rel="stylesheet" href="/css/footer.css">  
   <link rel="stylesheet" href="/css/buttonhover.css">
-  
-  
+  <link rel="stylesheet" href="/Pengajuan/peminjaman.css"> <!-- pisahan css kamera -->
   
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-   
 </head>
 <body>
 <header>
@@ -38,39 +34,15 @@
       </nav>
     </div>
   </header>
+
 <main>
   <div class="form-container">
-    <h2>Form Input Peminjaman</h2>
+    <h2>Form Input Pengambilan</h2>
     <form id="barangForm">
-      <input type="text" id="namaPeminjam" placeholder="Nama Peminjam" required>
+      <input type="text" id="namaPeminjam" placeholder="Nama Pengambilan" required>
       <input type="text" id="kelasInput" placeholder="Kelas / Jabatan" required>
-
-      <!-- 🔌 Status koneksi Firestore -->
-      <div id="status1" style="margin-top:10px; font-size:14px; color:#555;">
-        ⏳ Mengecek koneksi Firestore...
-      </div>
-
-      <input type="text" id="searchBarang" class="search-input" placeholder="Cari nama barang..."
-       style="padding:4px 8px !important; font-size:12px !important; width:50% !important; border:1px solid #ccc !important; border-radius:6px !important; margin-bottom:10px !important; display:block !important; margin-left:0 !important;">
-
-      <div class="table-container" style="margin-bottom:15px;">
-        <table id="barangMasukTable" class="barang-table">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama Barang</th>
-              <th>Satuan</th>
-              <th>Jumlah Barang</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="4" style="text-align:center;">⏳ Memuat data...</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <input type="text" id="namaBarang" placeholder="Nama Barang (Pilih dari table)" readonly>
-      <input type="text" id="satuanBarang" placeholder="Satuan Barang (Pilih dari table)" readonly>
+      <input type="text" id="namaBarang" placeholder="Nama Barang" required>
+      
       <input type="number" id="jumlahBarang" placeholder="Jumlah Barang" required>
 
       <div style="display:flex;align-items:center;margin:10px 0;gap:15px;">
@@ -87,9 +59,10 @@
 
         <!-- Login Google -->
         <div style="text-align:center;margin:15px 0;">
-          <button type="button" id="loginBtn" style="padding:8px 15px;background:#27ae60;color:white;border:none;border-radius:6px;cursor:pointer;">
-            🔑 Login dengan Google
-          </button>
+         <button type="button" id="loginBtn" style="padding:8px 15px;background:#27ae60;color:white;border:none;border-radius:6px;cursor:pointer;">
+  🔑 Login dengan Google
+</button>
+
         </div>
 
         <!-- Tombol Ambil Foto -->
@@ -127,15 +100,10 @@
       </button>
     </form>
 
-    <!-- 📌 Status pagination -->
-    <div id="status" style="margin-top:12px; text-align:center; font-size:14px;">
-      ⏳ Menunggu data...
-    </div>
-
+    <div id="status">⏳ Mengecek koneksi Firestore...</div>
     <div id="popup"></div>
   </div>
 </main>
-
 <input type="hidden" id="dataImageBase" name="dataImageBase">
 
 <!-- Modal Foto Besar -->
@@ -156,8 +124,6 @@
 <script type="module" src="/js/proteksi.js"></script>
 <script type="module" src="/js/preview.js"></script>
 <script type="module" src="/Pengajuan/Peminjaman.js"></script>
-<script type="module" src="/Pengajuan/tablerequest.js"></script>
-
 <script type="module">
 const previewImage = document.getElementById("previewImage");
 const imageModal = document.getElementById("imageModal");
@@ -246,6 +212,9 @@ function showPreview() {
     document.getElementById("uploadInfo").textContent = "📷 Preview ditampilkan lagi";
   }
 }
+
+// Contoh trigger: bisa dipanggil dari tombol lain
+// showPreview();
 </script>
 
 </body>

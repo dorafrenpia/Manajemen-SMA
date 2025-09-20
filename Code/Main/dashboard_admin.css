@@ -119,13 +119,6 @@ nav a.active::after {
   color: #4a90e2;
 }
 
-/* Status message */
-#status {
-  margin-bottom: 15px;
-  font-weight: bold;
-  font-size: 14px;
-  color: #555;
-}
 
 /* Table container */
 .table-container {
@@ -212,29 +205,6 @@ button:hover {
   .dashboard-container h2 {
     font-size: 18px;
   }
-}
-.page-btn {
-  background: #3498db;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #2980b9;
-  transform: translateY(-1px);
-}
-
-.page-btn:disabled {
-  background: #bdc3c7;
-  cursor: not-allowed;
-  box-shadow: none;
 }.filter-btn {
   padding: 8px 16px;
   background: #3498db;

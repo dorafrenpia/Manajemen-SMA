@@ -1,6 +1,9 @@
 // ======= Peminjaman.js =======
 import { db } from "/js/firebase.js";
-import { collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { 
+  collection, addDoc, serverTimestamp, getDocs, 
+  query, where, updateDoc, doc 
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 const form = document.getElementById("barangForm");
 const statusEl = document.getElementById("status");
@@ -37,6 +40,54 @@ function updateSubmitButton() {
 // Panggil saat load
 updateSubmitButton();
 
+// ===== Fungsi cek stok & kurangi =====
+async function cekStokDanKurangi(namaBarang, jumlahPinjam) {
+  try {
+    const q = query(collection(db, "barangMasuk"), where("namaBarang", "==", namaBarang));
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      alert("❌ Barang tidak ditemukan di database!");
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Barang tidak ada";
+        sendBtn.style.cursor = "not-allowed";
+      }
+      return false;
+    }
+
+    let docId = "";
+    let stokSekarang = 0;
+
+    snap.forEach((d) => {
+      docId = d.id;
+      stokSekarang = d.data().jumlahBarang || 0;
+    });
+
+    if (stokSekarang < jumlahPinjam) {
+      alert("❌ Stok tidak cukup. Stok tersedia: " + stokSekarang);
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Barang tidak cukup";
+        sendBtn.style.cursor = "not-allowed";
+      }
+      return false;
+    }
+
+    // Kurangi stok
+    const newStok = stokSekarang - jumlahPinjam;
+    await updateDoc(doc(db, "barangMasuk", docId), {
+      jumlahBarang: newStok
+    });
+
+    console.log(`✅ Stok ${namaBarang} dikurangi: ${stokSekarang} → ${newStok}`);
+    return true;
+  } catch (err) {
+    console.error("❌ Gagal cek stok:", err);
+    return false;
+  }
+}
+
 // ===== Submit Form =====
 if (!form) {
   console.warn("Form 'barangForm' tidak ditemukan di halaman.");
@@ -62,6 +113,14 @@ if (!form) {
     const keperluan = document.getElementById("keperluanInput")?.value.trim() || "";
 
     try {
+      // 🔹 Cek stok dulu
+      const stokOk = await cekStokDanKurangi(namaBarang, jumlahBarang);
+      if (!stokOk) {
+        if (statusEl) statusEl.textContent = "❌ Gagal karena stok barang tidak cukup.";
+        return; // stop, jangan lanjut simpan
+      }
+
+      // 🔹 Simpan data peminjaman
       await addDoc(collection(db, "peminjaman"), {
         namaPeminjam,
         kelasJabatan,

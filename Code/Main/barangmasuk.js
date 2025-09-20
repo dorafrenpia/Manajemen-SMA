@@ -269,43 +269,49 @@ function updateUploadCount() {
     uploadInfo.textContent = "📷 Belum ada foto diupload";
   }
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   const statusEl = document.getElementById("status");
-  
+
   document.getElementById("barangForm").addEventListener("submit", async e => {
     e.preventDefault();
 
     const kodeBarang = kodeInput.value.trim();
     const namaBarang = namaInput.value.trim();
     const merekValue = merekInput.value.trim();
-
-
     const jumlahBarang = parseInt(jumlahInput.value);
     const tanggalBarang = tanggalInput.value;
-    
+
     const kategori = kategoriDropdown.value;
     const satuan = satuanDropdown.value;
     const jenisDana = danaDropdown.value;
     const keterangan = keteranganInput.value.trim();
 
+    // 🔎 Validasi field wajib
     if (!kodeBarang || !namaBarang || !merekValue || !tanggalBarang || !kategori || !satuan || !jenisDana || isNaN(jumlahBarang)) {
       statusEl.textContent = "❌ Semua field harus diisi dengan benar!";
       return;
     }
-if (!merekValue) {
-  statusEl.textContent = "❌ Merek harus diisi!";
-  return;
-}
 
     try {
+      // 🔎 Cek apakah namaBarang sudah ada di Firestore
+      const q = query(
+        collection(db, "barangMasuk"),
+        where("namaBarang", "==", namaBarang)
+      );
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        statusEl.textContent = `⚠️ Barang "${namaBarang}" sudah ada di database!`;
+        return; // hentikan proses save
+      }
+
+      // ✅ Kalau belum ada → simpan data baru
       await addDoc(collection(db, "barangMasuk"), {
         kodeBarang,
         namaBarang,
         merek: merekValue,
         jumlahBarang,
         tanggalBarang,
-        
         kategori,
         satuan,
         jenisDana,
@@ -315,35 +321,34 @@ if (!merekValue) {
         createdAt: new Date()
       });
 
+      // reset data foto
       uploadedFileIds = [];
       uploadedFileLinks = [];
       localStorage.removeItem("uploadedFileIds");
       localStorage.removeItem("uploadedFileLinks");
       updateUploadCount();
 
- // Simpan teks default
-const defaultStatusText = statusEl.textContent;
+      // status sementara
+      statusEl.textContent = `🟢 Data tersimpan! Kode: ${kodeBarang}`;
 
-// Tampilkan pesan sementara di statusEl
-statusEl.textContent = `🟢 Data tersimpan! Kode: ${kodeBarang}`;
+      // update status koneksi setelah 3 detik
+      setTimeout(() => {
+        cekKoneksi();
+      }, 3000);
 
-// Kembalikan ke status koneksi Firestore setelah 3 detik
-setTimeout(() => {
-  cekKoneksi(); // panggil ulang untuk update status koneksi
-}, 3000);
-      
-      // Tampilkan popup
+      // tampilkan popup
       showPopup(`🟢 Data tersimpan! Kode: ${kodeBarang}`);
 
+      // reset form
       document.getElementById("barangForm").reset();
       kodeInput.value = "";
-
     } catch (err) {
       console.error("❌ Error menyimpan data:", err);
       statusEl.textContent = `❌ Gagal menyimpan: ${err.message}`;
     }
   });
 
+  // fungsi popup
   function showPopup(message) {
     const popup = document.getElementById("popup");
     popup.textContent = message;
@@ -351,6 +356,7 @@ setTimeout(() => {
     setTimeout(() => popup.classList.remove("show"), 3000);
   }
 });
+
 
 
 // 🔹 Load awal dropdown
