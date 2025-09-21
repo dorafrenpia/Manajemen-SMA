@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/refresh.css">
     <link rel="stylesheet" href="/css/footer.css">  
   <link rel="stylesheet" href="/css/link.css">
+     <link rel="stylesheet" href="/css/checkbox.css">
      <link rel="stylesheet" href="/css/buttonhover.css">
   <style>
     body { font-family: Arial, sans-serif; }
@@ -55,7 +56,7 @@
       <!-- 🔹 Tombol Filter & Export -->
       <div style="margin-bottom:10px;">
         
-        <button id="exportBtn">Export ke Excel</button>
+        <button id="exportBtn" style="margin-top: 20px;">Export ke Excel</button>
       </div>
 <button id="exportSheetBtn">Export ke Google Sheet</button>
 <!-- Tombol baru ini awalnya disembunyikan -->
@@ -74,9 +75,22 @@
             <input type="date" id="searchTanggalBarang">
             <label for="searchTanggalInput">Tanggal Input Sistem:</label>
             <input type="date" id="searchTanggalInput">
+         <div class="checkbox-container">
+  
+  <label>
+    <input type="checkbox" id="filterStokHabis">
+    Tampilkan hanya stok yang tersedia
+  </label>
+      <label>
+    <input type="checkbox" id="markStokHabis">
+    Tandai stok habis
+  </label>
+  
+</div>
           </div>
         </div>
       </div>
+   
 
       <!-- Tabel Barang -->
       <div class="table-container">
@@ -217,25 +231,28 @@ function driveDirectLink(url) {
 let no = 1;
 snapshot.forEach(doc => {
   const d = doc.data();
-  const fotoLink = d.fotoLinks?.[0] || '';
 
-  // Tambahkan row tanpa foto dulu
- const row = worksheet.addRow({
-  no: no++,
-  id: doc.id,
-  kode: d.kodeBarang,
-  nama: d.namaBarang,
-  merek: d.merek,
-  kategori: d.kategori,
-  jumlah: d.jumlahBarang,
-  satuan: d.satuan,
-  jenisDana: d.jenisDana,
-  tanggal: d.tanggalBarang,
-  foto: fotoLink,       // <-- letakkan sebelum keterangan
-  keterangan: d.keterangan
+  // Gabungkan semua link foto dengan ' || ' dan ubah ke direct link
+  const fotoLinks = (d.fotoLinks || []).map(link => driveDirectLink(link));
+  const fotoCell = fotoLinks.join(' || '); // Semua link dalam satu baris
+
+  // Tambahkan row ke worksheet
+  worksheet.addRow({
+    no: no++,
+    id: doc.id,
+    kode: d.kodeBarang,
+    nama: d.namaBarang,
+    merek: d.merek,
+    kategori: d.kategori,
+    jumlah: d.jumlahBarang,
+    satuan: d.satuan,
+    jenisDana: d.jenisDana,
+    tanggal: d.tanggalBarang,
+    foto: fotoCell,       // <-- semua link foto dalam satu sel
+    keterangan: d.keterangan
+  });
 });
 
-});
 
 
     // Export Excel
@@ -254,8 +271,7 @@ snapshot.forEach(doc => {
 });
 const exportSheetBtn = document.getElementById('exportSheetBtn');
 const goToSheetBtn = document.getElementById('goToSheetBtn');
-// URL Web App (versi terbaru)
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxgl_S64C593Sg3oyb1ihowpvguKj_H4yyuz8vAGIcePVhbfPFghZwhzZsh8lEXQVN0/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyKGWwP4CQJKcnPXPxbmKAEa98h4Jh74FUYrzBgDR2Um8gMUMn6ezN1ejKL54NlmqiT/exec";
 
 // ID Google Sheet
 const SHEET_ID = "1OORQVn4dP3BCXM29G87_nGKYBpHzv1vzkPPfZvARlY8";

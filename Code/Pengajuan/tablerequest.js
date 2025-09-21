@@ -57,7 +57,6 @@ document.getElementById("barangTabs").addEventListener("click", e => {
     activeBarangIndex = parseInt(e.target.dataset.index);
   }
 });
-
 // ======================
 // 🔹 RENDER TABLE + PAGINATION
 // ======================
@@ -67,12 +66,24 @@ function renderTable() {
 
   tableBody.innerHTML = "";
 
-  const totalPages = Math.ceil(filteredBarang.length / pageSize);
+  // 🔹 Ambil checkbox
+  const markStokHabis = document.getElementById("markStokHabis");
+  const filterStokHabis = document.getElementById("filterStokHabis");
+
+  // 🔹 Filter data kalau checkbox "tampilkan hanya stok habis" aktif
+  let dataSource = filteredBarang;
+if (filterStokHabis && filterStokHabis.checked) {
+  // tampilkan hanya stok TIDAK HABIS
+  dataSource = dataSource.filter(d => d.jumlahBarang && d.jumlahBarang > 0);
+}
+
+
+  const totalPages = Math.ceil(dataSource.length / pageSize);
   if (currentPage > totalPages) currentPage = totalPages || 1;
 
   const start = (currentPage - 1) * pageSize;
   const end = start + pageSize;
-  const pageData = filteredBarang.slice(start, end);
+  const pageData = dataSource.slice(start, end);
 
   if (pageData.length === 0) {
     tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Data tidak ditemukan</td></tr>';
@@ -80,6 +91,12 @@ function renderTable() {
     let no = start + 1;
     pageData.forEach(data => {
       const row = document.createElement("tr");
+
+      // 🔹 kasih warna merah kalau stok kosong/negatif DAN checkbox markStokHabis dicentang
+      if (markStokHabis && markStokHabis.checked && (!data.jumlahBarang || data.jumlahBarang <= 0)) {
+        row.style.backgroundColor = "#ffcccc"; // merah muda
+      }
+
       row.innerHTML = `
         <td>${no++}</td>
         <td>${data.namaBarang || "-"}</td>
@@ -87,21 +104,18 @@ function renderTable() {
         <td>${data.jumlahBarang || "-"}</td>
       `;
 
-     // Klik baris → isi Nama Barang & Satuan di field barang aktif
-row.addEventListener("click", () => {
-  const namaInput = document.getElementById(`namaBarang-${activeBarangIndex}`);
-  const satuanInput = document.getElementById(`satuanBarang-${activeBarangIndex}`);
+      row.addEventListener("click", () => {
+        const namaInput = document.getElementById(`namaBarang-${activeBarangIndex}`);
+        const satuanInput = document.getElementById(`satuanBarang-${activeBarangIndex}`);
 
-  if (namaInput && satuanInput) {
-    namaInput.value = data.namaBarang || "";
-    satuanInput.value = data.satuan || "";
-  }
+        if (namaInput && satuanInput) {
+          namaInput.value = data.namaBarang || "";
+          satuanInput.value = data.satuan || "";
+        }
 
-  // Highlight baris yang dipilih
-  tableBody.querySelectorAll("tr").forEach(r => r.classList.remove("active"));
-  row.classList.add("active");
-});
-
+        tableBody.querySelectorAll("tr").forEach(r => r.classList.remove("active"));
+        row.classList.add("active");
+      });
 
       tableBody.appendChild(row);
     });
@@ -110,7 +124,7 @@ row.addEventListener("click", () => {
   // Status + Navigasi
   statusEl.innerHTML = `
     <div style="font-weight:500; margin-bottom:6px;">
-      🟢 Menampilkan ${start + 1} - ${Math.min(end, filteredBarang.length)} dari ${filteredBarang.length} data
+      🟢 Menampilkan ${start + 1} - ${Math.min(end, dataSource.length)} dari ${dataSource.length} data
     </div>
     <div style="display:flex; gap:10px; align-items:center; justify-content:center; margin-top:8px;">
       <button class="page-btn" ${currentPage === 1 ? "disabled" : ""} onclick="prevPage()">⬅️ Sebelumnya</button>
@@ -121,6 +135,11 @@ row.addEventListener("click", () => {
     </div>
   `;
 }
+
+// 🔹 Update tabel otomatis kalau checkbox berubah
+document.getElementById("markStokHabis")?.addEventListener("change", renderTable);
+document.getElementById("filterStokHabis")?.addEventListener("change", renderTable);
+
 
 // ======================
 // 🔹 NAVIGASI HALAMAN

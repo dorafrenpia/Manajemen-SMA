@@ -11,37 +11,13 @@
   <link rel="stylesheet" href="/css/link.css">  
   <link rel="stylesheet" href="/css/footer.css">  
   <link rel="stylesheet" href="/css/buttonhover.css">
+  <link rel="stylesheet" href="/css/checkbox.css">
   
   
   
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-   <style>.tab-btn {
-  padding: 6px 12px;
-  background: #eee;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  flex-shrink: 0; /* biar ga mengecil pas banyak */
-}
-.tab-btn.active {
-  background: #4a90e2;
-  color: white;
-}
-.barang-field input {
-  display: block;
-  margin-bottom: 8px;
-  padding: 6px 10px;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-#barangTabs::-webkit-scrollbar {
-  height: 6px;
-}
-#barangTabs::-webkit-scrollbar-thumb {
-  background: #bbb;
-  border-radius: 3px;
-}</style>
+   <style>
+</style>
    
 </head>
 <body>
@@ -64,6 +40,8 @@
         </button>
       </nav>
     </div>
+    
+
   </header>
 <main>
   <div class="form-container">
@@ -81,6 +59,20 @@
        style="padding:4px 8px !important; font-size:12px !important; width:50% !important; border:1px solid #ccc !important; border-radius:6px !important; margin-bottom:10px !important; display:block !important; margin-left:0 !important;">
 
       <div class="table-container" style="margin-bottom:15px;">
+     <div class="checkbox-container">
+  
+  <label>
+    <input type="checkbox" id="filterStokHabis">
+    Tampilkan hanya stok yang tersedia
+  </label>
+      <label>
+    <input type="checkbox" id="markStokHabis">
+    Tandai stok habis
+  </label>
+  
+</div>
+
+
         <table id="barangMasukTable" class="barang-table">
           <thead>
             <tr>

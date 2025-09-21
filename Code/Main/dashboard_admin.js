@@ -40,7 +40,7 @@ if (!localStorage.getItem("isLoggedIn")) {
 // 🔹 Format Rupiah
 function formatRupiah(angka) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
-}// 🔹 Render Tabel
+}
 // 🔹 Buat teks refresh sekali saja (selalu tampil di atas statusEl)
 function setupRefreshNote() {
   let refreshContainer = document.getElementById("refresh-container");
@@ -63,23 +63,43 @@ setupRefreshNote();
 
 let currentPage = 1;
 const pageSize = 10;
+// 🔹 Ambil checkbox (pastikan di luar fungsi renderTable)
+const markStokHabis = document.getElementById("markStokHabis");
+const filterStokHabis = document.getElementById("filterStokHabis");
+
+// Tambahkan event listener supaya tabel rerender saat checkbox berubah
+markStokHabis.addEventListener("change", () => renderTable(allData));
+filterStokHabis.addEventListener("change", () => renderTable(allData));
 
 // 🔹 Render tabel dengan pagination
 function renderTable(data) {
   tableBody.innerHTML = "";
 
-  if (data.length === 0) {
+  // 🔹 Filter data jika checkbox "tampilkan hanya stok habis" dicentang
+ // 🔹 Filter data jika checkbox "tampilkan hanya stok habis" dicentang
+let displayData = [...data];
+if (filterStokHabis.checked) {
+  // hanya tampilkan data dengan jumlahBarang > 0
+  displayData = displayData.filter(item => item.jumlahBarang && item.jumlahBarang > 0);
+}
+
+
+  if (displayData.length === 0) {
     statusEl.textContent = "⚠️ Tidak ada data yang cocok!";
     return;
   }
 
-  // Hitung indeks data berdasarkan page
   const start = (currentPage - 1) * pageSize;
   const end = start + pageSize;
-  const paginated = data.slice(start, end);
+  const paginated = displayData.slice(start, end);
 
   paginated.forEach((item, index) => {
     const row = document.createElement("tr");
+
+    // 🔹 Tandai stok habis dengan warna merah jika checkbox dicentang
+    if (markStokHabis.checked && (!item.jumlahBarang || item.jumlahBarang <= 0)) {
+      row.style.backgroundColor = "#ffcccc";
+    }
 
     let fotoBtns = "-";
     if (item.fotoLinks && item.fotoLinks.length > 0) {
@@ -99,14 +119,11 @@ function renderTable(data) {
       <td>${item.namaBarang || '-'}</td>
       <td>${item.merek || '-'}</td>
       <td>${item.jumlahBarang || '-'}</td>
-      
       <td>${item.tanggalBarang || '-'}</td>
-      
       <td>${item.createdAt?.toDate ? item.createdAt.toDate().toLocaleString("id-ID") : '-'}</td>
       <td>${item.kategori || '-'}</td>
       <td>${item.satuan || '-'}</td>
       <td>${item.jenisDana || '-'}</td>
-      
       <td>${fotoBtns}</td>
       <td>${item.keterangan || '-'}</td>
       <td><button class="edit-btn" onclick="editRowPopup(${start + index})">✏️ Edit</button></td>
@@ -115,30 +132,30 @@ function renderTable(data) {
     tableBody.appendChild(row);
   });
 
- // 🔹 Status + Navigasi (modern style)
-const totalPages = Math.ceil(data.length / pageSize);
-statusEl.innerHTML = `
-  <div style="font-weight:500; margin-bottom:6px;">
-    🟢 Menampilkan ${start + 1} - ${Math.min(end, data.length)} dari ${data.length} data
-  </div>
-  <div style="display:flex; gap:10px; align-items:center; justify-content:center; margin-top:8px;">
-    <button 
-      class="page-btn" 
-      ${currentPage === 1 ? "disabled" : ""} 
-      onclick="prevPage()">⬅️ Sebelumnya
-    </button>
-    <span style="font-size:14px; font-weight:600; color:#555;">
-      Halaman ${currentPage} / ${totalPages}
-    </span>
-    <button 
-      class="page-btn" 
-      ${currentPage === totalPages ? "disabled" : ""} 
-      onclick="nextPage()">Berikutnya ➡️
-    </button>
-  </div>
-`;
-
+  // 🔹 Status + Navigasi (tidak diubah dari yang asli)
+  const totalPages = Math.ceil(displayData.length / pageSize);
+  statusEl.innerHTML = `
+    <div style="font-weight:500; margin-bottom:6px;">
+      🟢 Menampilkan ${start + 1} - ${Math.min(end, displayData.length)} dari ${displayData.length} data
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; justify-content:center; margin-top:8px;">
+      <button 
+        class="page-btn" 
+        ${currentPage === 1 ? "disabled" : ""} 
+        onclick="prevPage()">⬅️ Sebelumnya
+      </button>
+      <span style="font-size:14px; font-weight:600; color:#555;">
+        Halaman ${currentPage} / ${totalPages}
+      </span>
+      <button 
+        class="page-btn" 
+        ${currentPage === totalPages ? "disabled" : ""} 
+        onclick="nextPage()">Berikutnya ➡️
+      </button>
+    </div>
+  `;
 }
+
 
 // 🔹 Navigasi halaman
 window.prevPage = function() {

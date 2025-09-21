@@ -135,35 +135,41 @@ if (!form) {
           return; // stop langsung kalau ada yang gagal
         }
       }
+// 🔹 Simpan data peminjaman ke Firestore
+await addDoc(collection(db, "peminjaman"), {
+  namaPeminjam,
+  kelasJabatan,
+  tanggalPeminjaman,
+  keperluan,
+  barangDipinjam,
+  fotoPengambilan: window.uploadedPhotos.map(f => f.fileLink),
+  fotoId: window.uploadedPhotos.map(f => f.fileId),
+  email: currentUserEmail,
+  createdAt: serverTimestamp()
+});
 
-      // 🔹 Simpan data peminjaman ke Firestore
-      await addDoc(collection(db, "peminjaman"), {
-        namaPeminjam,
-        kelasJabatan,
-        tanggalPeminjaman,
-        keperluan,
-        barangDipinjam, // <-- ARRAY barang
-        fotoPengambilan: window.uploadedPhotos.map(f => f.fileLink),
-        fotoId: window.uploadedPhotos.map(f => f.fileId),
-        email: currentUserEmail,
-        createdAt: serverTimestamp()
-      });
+if (statusEl) statusEl.textContent = "✅ Data berhasil disimpan!";
+if (popup) popup.innerHTML = `<div style="padding:10px; background:#2ecc71; color:white; border-radius:5px;">
+  Data peminjaman berhasil disimpan 🎉
+</div>`;
 
-      if (statusEl) statusEl.textContent = "✅ Data berhasil disimpan!";
-      if (popup) popup.innerHTML = `<div style="padding:10px; background:#2ecc71; color:white; border-radius:5px;">
-        Data peminjaman berhasil disimpan 🎉
-      </div>`;
+// 🔹 Reset form & upload
+form.reset();
+window.uploadedPhotos = [];
+if (fotoPengambilanInput) {
+  fotoPengambilanInput.value = "";
+  fotoPengambilanInput.dataset.fileId = "";
+  fotoPengambilanInput.dataset.fileLink = "";
+}
 
-      form.reset();
-      window.uploadedPhotos = [];
-      if (fotoPengambilanInput) {
-        fotoPengambilanInput.value = "";
-        fotoPengambilanInput.dataset.fileId = "";
-        fotoPengambilanInput.dataset.fileLink = "";
-      }
+window.updateUploadDebug?.();
+updateSubmitButton();
 
-      window.updateUploadDebug?.();
-      updateSubmitButton();
+// 🔹 Refresh halaman (form kembali bersih)
+setTimeout(() => {
+  location.reload();
+}, 1000); // kasih delay biar status "berhasil" sempat tampil
+
 
     } catch (error) {
       console.error("❌ Error simpan data:", error);
