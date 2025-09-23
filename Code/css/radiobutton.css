@@ -1,0 +1,47 @@
+.radio-card-container {
+  margin: 15px 0;
+}
+
+.radio-card-container p {
+  margin: 0 0 10px 0;
+  font-weight: bold;
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+/* Hide default radio */
+.radio-card-container input[type="radio"] {
+  display: none;
+}
+
+/* Card style */
+.radio-card-container .radio-card {
+  display: inline-block;
+  padding: 12px 20px;
+  margin-right: 12px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background: #f9f9f9;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.radio-card-container .radio-card:hover {
+  border-color: #4a90e2;
+  background: #eef6ff;
+  color: #4a90e2;
+}
+
+/* Selected state */
+.radio-card-container input[type="radio"]:checked + .radio-card {
+  border-color: #4a90e2;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(74,144,226,0.3);
+  transform: translateY(-2px);
+}

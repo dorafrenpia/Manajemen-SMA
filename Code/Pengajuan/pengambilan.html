@@ -3,15 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Input Barang Masuk</title>
+  <title>Input Barang Masuk - Users</title>
+  
+  <link rel="stylesheet" href="/Pengajuan/peminjaman.css"> <!-- pisahan css kamera -->
+  <link rel="stylesheet" href="/Dropdown/table.css">
   <link rel="stylesheet" href="/Main/barangmasuk.css">
   <link rel="stylesheet" href="/css/refresh.css">
   <link rel="stylesheet" href="/css/link.css">  
   <link rel="stylesheet" href="/css/footer.css">  
   <link rel="stylesheet" href="/css/buttonhover.css">
-  <link rel="stylesheet" href="/Pengajuan/peminjaman.css"> <!-- pisahan css kamera -->
+  <link rel="stylesheet" href="/css/checkbox.css">
+  
+  
+  
   
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+   <style>
+    .radio-card-container {
+  margin: 15px 0;
+}
+
+.radio-card-container p {
+  margin: 0 0 10px 0;
+  font-weight: bold;
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+/* Hide default radio */
+.radio-card-container input[type="radio"] {
+  display: none;
+}
+
+/* Card style */
+.radio-card-container .radio-card {
+  display: inline-block;
+  padding: 12px 20px;
+  margin-right: 12px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background: #f9f9f9;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.radio-card-container .radio-card:hover {
+  border-color: #4a90e2;
+  background: #eef6ff;
+  color: #4a90e2;
+}
+
+/* Selected state */
+.radio-card-container input[type="radio"]:checked + .radio-card {
+  border-color: #4a90e2;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(74,144,226,0.3);
+  transform: translateY(-2px);
+}
+
+</style>
+   
 </head>
 <body>
 <header>
@@ -23,7 +80,7 @@
       <nav style="display: flex; gap: 15px; align-items: center;">
         <a href="/Pengajuan/Dashboard_Users.html">Dashboard</a>
         
-        <a href="/Pengajuan/peminjaman.html">Peminjaman</a>
+        <a href="/Pengajuan/peminjaman.html">Pengajuan</a>
         <a href="/Pengajuan/Pengambilan.html">Pengambilan</a>
         
         <a href="/User/status.html">Informasi</a>
@@ -33,22 +90,99 @@
         </button>
       </nav>
     </div>
-  </header>
+    
 
+  </header>
 <main>
   <div class="form-container">
-    <h2>Form Input Pengambilan</h2>
+    <h2>Form Input Pengajuan</h2>
     <form id="barangForm">
-      <input type="text" id="namaPeminjam" placeholder="Nama Pengambilan" required>
-      <input type="text" id="kelasInput" placeholder="Kelas / Jabatan" required>
-      <input type="text" id="namaBarang" placeholder="Nama Barang" required>
-      
-      <input type="number" id="jumlahBarang" placeholder="Jumlah Barang" required>
+      <input type="text" id="kodePengajuan" placeholder="Kode Pengajuan" readonly style="background:#f5f5f5; font-weight:bold;">
 
+      <input type="text" id="namaPeminjam" placeholder="Nama Peminjam" required>
+      <input type="text" id="kelasInput" placeholder="Kelas / Jabatan" required>
+
+      <!-- 🔌 Status koneksi Firestore -->
+      <div id="status1" style="margin-top:10px; font-size:14px; color:#555;">
+        ⏳ Mengecek koneksi Firestore...
+      </div>
+
+      <input type="text" id="searchBarang" class="search-input" placeholder="Cari nama barang..."
+       style="padding:4px 8px !important; font-size:12px !important; width:50% !important; border:1px solid #ccc !important; border-radius:6px !important; margin-bottom:10px !important; display:block !important; margin-left:0 !important;">
+
+      <div class="table-container" style="margin-bottom:15px;">
+     <div class="checkbox-container">
+  
+  <label>
+    <input type="checkbox" id="filterStokHabis">
+    Tampilkan hanya stok yang tersedia
+  </label>
+      <label>
+    <input type="checkbox" id="markStokHabis">
+    Tandai stok habis
+  </label>
+  
+</div>
+
+
+        <table id="barangMasukTable" class="barang-table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Barang</th>
+              <th>Satuan</th>
+              <th>Jumlah Barang</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="4" style="text-align:center;">⏳ Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+<div id="barangSection">
+  <!-- Tab Barang dengan scroll -->
+  <div id="barangTabs" 
+       style="margin-bottom:10px; display:flex; gap:8px; overflow-x:auto; white-space:nowrap; padding-bottom:5px; border-bottom:1px solid #ccc;">
+    <button type="button" class="tab-btn active" data-index="1">Barang 1</button>
+  </div>
+
+  <!-- Container field barang -->
+  <div id="barangFields">
+    <div class="barang-field" data-index="1">
+      <input type="text" id="namaBarang-1" placeholder="Nama Barang (Pilih dari table)" readonly>
+      <input type="text" id="satuanBarang-1" placeholder="Satuan Barang (Pilih dari table)" readonly>
+      <input type="number" id="jumlahBarang-1" placeholder="Jumlah Barang" required>
+    </div>
+  </div>
+
+  <!-- Tombol tambah barang -->
+  <div style="margin-top:10px;">
+    <button type="button" id="addBarangBtn" 
+      style="padding:6px 12px; background:#27ae60; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+      ➕ Tambah Barang
+    </button>
+      <button type="button" id="hapusBarangBtn" 
+    style="padding:6px 12px; background:#c0392b; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+    🗑️ Hapus Barang
+  </button>
+  </div>
+</div>
+    
       <div style="display:flex;align-items:center;margin:10px 0;gap:15px;">
         <p style="margin:0;font-weight:bold;min-width:160px;opacity:0.7;">Tanggal Peminjaman</p>
         <input type="date" id="tanggalPeminjaman" required style="padding:8px 12px;border:1px solid #ccc;border-radius:8px;font-size:14px;">
       </div>
+<!-- 🔘 Pilih Tipe -->
+<div class="radio-card-container">
+  <p>Tipe Pengajuan</p>
+
+  <input type="radio" id="minjam" name="tipePengajuan" value="minjam" required>
+  <label for="minjam" class="radio-card">📦 Minjam Barang</label>
+
+  <input type="radio" id="minta" name="tipePengajuan" value="minta" required>
+  <label for="minta" class="radio-card">🛒 Minta Barang</label>
+</div>
+
 
       <input type="text" id="keperluanInput" placeholder="Keperluan" required>
 
@@ -59,10 +193,9 @@
 
         <!-- Login Google -->
         <div style="text-align:center;margin:15px 0;">
-         <button type="button" id="loginBtn" style="padding:8px 15px;background:#27ae60;color:white;border:none;border-radius:6px;cursor:pointer;">
-  🔑 Login dengan Google
-</button>
-
+          <button type="button" id="loginBtn" style="padding:8px 15px;background:#27ae60;color:white;border:none;border-radius:6px;cursor:pointer;">
+            🔑 Login dengan Google
+          </button>
         </div>
 
         <!-- Tombol Ambil Foto -->
@@ -100,10 +233,15 @@
       </button>
     </form>
 
-    <div id="status">⏳ Mengecek koneksi Firestore...</div>
+    <!-- 📌 Status pagination -->
+    <div id="status" style="margin-top:12px; text-align:center; font-size:14px;">
+      ⏳ Menunggu data...
+    </div>
+
     <div id="popup"></div>
   </div>
 </main>
+
 <input type="hidden" id="dataImageBase" name="dataImageBase">
 
 <!-- Modal Foto Besar -->
@@ -123,7 +261,9 @@
 <script type="module" src="/js/app.js"></script>
 <script type="module" src="/js/proteksi.js"></script>
 <script type="module" src="/js/preview.js"></script>
-<script type="module" src="/Pengajuan/Peminjaman.js"></script>
+<script type="module" src="/Pengajuan/Pengembalian.js"></script>
+<script type="module" src="/Pengajuan/tablerequest.js"></script>
+
 <script type="module">
 const previewImage = document.getElementById("previewImage");
 const imageModal = document.getElementById("imageModal");
@@ -212,9 +352,129 @@ function showPreview() {
     document.getElementById("uploadInfo").textContent = "📷 Preview ditampilkan lagi";
   }
 }
+let barangCount = 1;
 
-// Contoh trigger: bisa dipanggil dari tombol lain
-// showPreview();
+// Fungsi buat tab + field baru
+document.getElementById("addBarangBtn").addEventListener("click", () => {
+  barangCount++;
+
+  // buat tab baru
+  const tabBtn = document.createElement("button");
+  tabBtn.type = "button";
+  tabBtn.className = "tab-btn";
+  tabBtn.dataset.index = barangCount;
+  tabBtn.textContent = "Barang " + barangCount;
+  document.getElementById("barangTabs").appendChild(tabBtn);
+
+  // auto scroll ke kanan (biar tab baru kelihatan)
+  document.getElementById("barangTabs").scrollLeft = document.getElementById("barangTabs").scrollWidth;
+
+  // buat field baru
+  const newField = document.createElement("div");
+  newField.className = "barang-field";
+  newField.dataset.index = barangCount;
+  newField.style.display = "none";
+  newField.innerHTML = `
+    <input type="text" id="namaBarang-${barangCount}" placeholder="Nama Barang (Pilih dari table)" readonly>
+    <input type="text" id="satuanBarang-${barangCount}" placeholder="Satuan Barang (Pilih dari table)" readonly>
+    <input type="number" id="jumlahBarang-${barangCount}" placeholder="Jumlah Barang" required>
+  `;
+  document.getElementById("barangFields").appendChild(newField);
+});
+// Tombol Hapus Barang berdasarkan tab aktif
+document.getElementById("hapusBarangBtn").addEventListener("click", () => {
+  const activeTab = document.querySelector("#barangTabs .tab-btn.active");
+  if (!activeTab) return; // ga ada tab aktif, hentikan
+
+  const idx = parseInt(activeTab.dataset.index);
+
+  // hapus tab dan field yang aktif
+  activeTab.remove();
+  const activeField = document.querySelector(`.barang-field[data-index="${idx}"]`);
+  if (activeField) activeField.remove();
+
+  // update index dan teks tab + field yang lebih tinggi dari yang dihapus
+  document.querySelectorAll(".tab-btn").forEach(tab => {
+    let tabIdx = parseInt(tab.dataset.index);
+    if (tabIdx > idx) {
+      tab.dataset.index = tabIdx - 1;
+      tab.textContent = "Barang " + (tabIdx - 1);
+    }
+  });
+
+  document.querySelectorAll(".barang-field").forEach(field => {
+    let fieldIdx = parseInt(field.dataset.index);
+    if (fieldIdx > idx) {
+      field.dataset.index = fieldIdx - 1;
+      field.querySelector(`#namaBarang-${fieldIdx}`).id = `namaBarang-${fieldIdx - 1}`;
+      field.querySelector(`#satuanBarang-${fieldIdx}`).id = `satuanBarang-${fieldIdx - 1}`;
+      field.querySelector(`#jumlahBarang-${fieldIdx}`).id = `jumlahBarang-${fieldIdx - 1}`;
+    }
+  });
+
+  // tampilkan tab terakhir yang ada
+  const allTabs = document.querySelectorAll(".tab-btn");
+  if (allTabs.length > 0) {
+    const lastTab = allTabs[allTabs.length - 1];
+    lastTab.classList.add("active");
+
+    // hide semua field
+    document.querySelectorAll(".barang-field").forEach(f => f.style.display = "none");
+
+    // tampilkan field sesuai tab terakhir
+    const lastField = document.querySelector(`.barang-field[data-index="${lastTab.dataset.index}"]`);
+    if (lastField) lastField.style.display = "block";
+  }
+
+  // update counter
+  barangCount--;
+});
+
+// Event delegation buat klik tab
+document.getElementById("barangTabs").addEventListener("click", e => {
+  if (e.target.classList.contains("tab-btn")) {
+    const idx = e.target.dataset.index;
+
+    // reset semua tab
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+    e.target.classList.add("active");
+
+    // hide semua field
+    document.querySelectorAll(".barang-field").forEach(f => f.style.display = "none");
+
+    // tampilkan field sesuai tab
+    document.querySelector(`.barang-field[data-index="${idx}"]`).style.display = "block";
+  }
+});
+import { db } from "/js/firebase.js";
+  import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+  const currentUserNomor = localStorage.getItem("nomor") || "";
+  const kodePengajuanInput = document.getElementById("kodePengajuan");
+  const tanggalInput = document.getElementById("tanggalPeminjaman");
+  const tipeInputs = document.querySelectorAll("input[name='tipePengajuan']");
+
+  async function updateKodePengajuan() {
+    const tanggal = tanggalInput.value;
+    const tipe = [...tipeInputs].find(r => r.checked)?.value || "";
+
+    if (!tanggal || !tipe) {
+      kodePengajuanInput.value = "";
+      return;
+    }
+
+    // 🔹 ambil jumlah data lama untuk urutan
+    const snapshot = await getDocs(collection(db, "peminjaman"));
+    const urutan = snapshot.size + 1;
+
+    // 🔹 format: nomor-tipe-urutan
+    const kode = `${currentUserNomor}-${tipe}-${urutan}`;
+    kodePengajuanInput.value = kode;
+  }
+
+  // event listener
+  tanggalInput.addEventListener("change", updateKodePengajuan);
+  tipeInputs.forEach(r => r.addEventListener("change", updateKodePengajuan));
 </script>
 
 </body>

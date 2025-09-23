@@ -36,7 +36,7 @@
       <nav style="display: flex; gap: 15px; align-items: center;">
         <a href="dashboard_admin.html">Dashboard</a>
         <a href="barangmasuk.html">Barang Masuk</a>
-        <a href="/Main/List.html">Peminjaman</a>
+        <a href="/Main/List.html">Pengajuan</a>
         <a href="/Dropdown/dropdown.html">Dropdown</a>
         <button clas onclick="logout()" style="font-weight:  bold;padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
           Logout
@@ -50,6 +50,7 @@
     <div class="form-container">
       <h2>Form Input Barang Masuk</h2>
       <form id="barangForm">
+                <input type="text" id="kodeBarang" placeholder="Kode Barang" required style="background:#f5f5f5; font-weight:bold;">
         <input type="text" id="namaBarang" placeholder="Nama Barang" required>
         <div style="display: flex; align-items: center; margin: 10px 0; gap: 15px;">
   
@@ -132,7 +133,8 @@
         <input type="text" id="keteranganInput" placeholder="Isi keterangan">
 
         <!-- Kode Barang -->
-        <input type="text" id="kodeBarang" placeholder="Kode Barang" required>
+
+
 
         <!-- Submit -->
         <button type="submit" style="width: 100%; padding: 12px 15px; margin-top: 15px; background: linear-gradient(90deg, #4a90e2, #357abd); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.3s;">

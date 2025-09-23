@@ -27,7 +27,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // 🔹 Cek DEV_Users (IT/Admin)
+      // 🔹 1) Cek DEV_Users (IT/Admin) dulu (tetap seperti sebelumnya)
       const devUsersRef = collection(db, "DEV_Users");
       const qDev = query(devUsersRef, where("nama", "==", email));
       const snapDev = await getDocs(qDev);
@@ -37,7 +37,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (devData.password === password) {
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("role", devData.role);
-  
+          // jangan set nomor untuk DEV jika tidak ada
           if (devData.role.toLowerCase() === "admin") {
             showPopup("Login admin berhasil! Mengarahkan ke dashboard...", "success", 2000);
             setTimeout(() => { window.location.href = "/Main/dashboard_admin.html"; }, 2000);
@@ -45,7 +45,7 @@ window.addEventListener("DOMContentLoaded", () => {
             showPopup("Login IT berhasil! Mengarahkan ke halaman IT...", "success", 2000);
             setTimeout(() => { window.location.href = "/IT/IT.html"; }, 2000);
           } else {
-            showPopup("Role tidak dikenali!", "error");
+            showPopup("Role DEV tidak dikenali!", "error");
           }
           return;
         } else {
@@ -54,7 +54,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // 🔹 Cek Firebase Auth untuk semua role selain DEV
+      // 🔹 2) Cek Firebase Auth untuk semua role selain DEV
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -64,39 +64,80 @@ window.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // 🔹 Ambil role dari Firestore (Organisasi atau Guru)
+        // Helper: simpan login dasar
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("email", email);
+
+        // 🔹 3) Cek koleksi DataOrganisasi
         const orgRef = collection(db, "DataOrganisasi");
         const qOrg = query(orgRef, where("email", "==", email));
         const snapOrg = await getDocs(qOrg);
 
         if (!snapOrg.empty) {
-          localStorage.setItem("isLoggedIn", "true");
+          const orgData = snapOrg.docs[0].data();
           localStorage.setItem("role", "organisasi");
-            localStorage.setItem("email", email); // ⬅️ tambahkan ini
-          showPopup("Login berhasil! Mengarahkan ke dashboard Organisasi...", "success", 2000);
-          setTimeout(() => { window.location.href = "/Main/dashboard_organisasi.html"; }, 2000);
+
+          // simpan nomor hanya kalau ada isian
+          if (orgData.nomorOrg !== undefined && orgData.nomorOrg !== null && String(orgData.nomorOrg).trim() !== "") {
+            localStorage.setItem("nomor", String(orgData.nomorOrg).trim());
+          } else {
+            // jika tidak ada, hapus key nomor agar tidak tersisa dari login sebelumnya
+            localStorage.removeItem("nomor");
+            showPopup("Nomor organisasi belum terdaftar. Lengkapi profil Anda.", "warning", 3500);
+          }
+
+          showPopup("Login berhasil! Mengarahkan ke dashboard Organisasi...", "success", 1200);
+          setTimeout(() => { window.location.href = "/Main/dashboard_organisasi.html"; }, 1200);
           return;
         }
 
+        // 🔹 4) Cek koleksi DataGuru
         const guruRef = collection(db, "DataGuru");
         const qGuru = query(guruRef, where("email", "==", email));
         const snapGuru = await getDocs(qGuru);
 
         if (!snapGuru.empty) {
-          localStorage.setItem("isLoggedIn", "true");
+          const guruData = snapGuru.docs[0].data();
           localStorage.setItem("role", "guru");
-            localStorage.setItem("email", email); // ⬅️ tambahkan ini
-          showPopup("Login berhasil! Mengarahkan ke dashboard Guru...", "success", 2000);
-          setTimeout(() => { window.location.href = "/Main/dashboard_guru.html"; }, 2000);
+
+          if (guruData.nomor !== undefined && guruData.nomor !== null && String(guruData.nomor).trim() !== "") {
+            localStorage.setItem("nomor", String(guruData.nomor).trim());
+          } else {
+            localStorage.removeItem("nomor");
+            showPopup("Nomor guru belum terdaftar. Lengkapi profil Anda.", "warning", 3500);
+          }
+
+          showPopup("Login berhasil! Mengarahkan ke dashboard Guru...", "success", 1200);
+          setTimeout(() => { window.location.href = "/Main/dashboard_guru.html"; }, 1200);
           return;
         }
 
-        // 🔹 Kalau bukan DEV, Organisasi, maupun Guru → user biasa
-        localStorage.setItem("isLoggedIn", "true");
+        // 🔹 5) Cek koleksi users (user biasa)
+        const userRef = collection(db, "users");
+        const qUser = query(userRef, where("email", "==", email));
+        const snapUser = await getDocs(qUser);
+
+        if (!snapUser.empty) {
+          const userData = snapUser.docs[0].data();
+          localStorage.setItem("role", "user");
+
+          if (userData.nisn !== undefined && userData.nisn !== null && String(userData.nisn).trim() !== "") {
+            localStorage.setItem("nomor", String(userData.nisn).trim());
+          } else {
+            localStorage.removeItem("nomor");
+            showPopup("NISN belum terdaftar. Lengkapi profil Anda.", "warning", 3500);
+          }
+
+          showPopup("Login berhasil! Mengarahkan ke dashboard...", "success", 1200);
+          setTimeout(() => { window.location.href = "/Pengajuan/Dashboard_Users.html"; }, 1200);
+          return;
+        }
+
+        // 🔹 6) Jika tidak ditemukan di ketiga koleksi (tetap treat as user tanpa nomor)
         localStorage.setItem("role", "user");
-          localStorage.setItem("email", email); // ⬅️ tambahkan ini
-        showPopup("Login berhasil! Mengarahkan ke dashboard...", "success", 2000);
-        setTimeout(() => { window.location.href = "/Pengajuan/Dashboard_Users.html"; }, 2000);
+        localStorage.removeItem("nomor");
+        showPopup("Login berhasil! (profil belum lengkap). Mengarahkan ke dashboard...", "success", 1200);
+        setTimeout(() => { window.location.href = "/Pengajuan/Dashboard_Users.html"; }, 1200);
 
       } catch (authErr) {
         console.log("❌ Login Firebase gagal:", authErr);

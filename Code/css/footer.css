@@ -63,5 +63,14 @@ header .container {
     text-align: left;
   }
 
-  
+  table {
+    min-width: 480px;
+  }
+  th, td {
+    padding: 6px;
+    font-size: 12px;
+  }
+  .dashboard-container h2 {
+    font-size: 18px;
+  }
 }

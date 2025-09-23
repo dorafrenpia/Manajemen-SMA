@@ -1,4 +1,4 @@
-// ======= Peminjaman.js =======
+// ======= Pengembalian.js =======
 import { db } from "/js/firebase.js";
 import { 
   collection, addDoc, serverTimestamp, getDocs, 
@@ -8,7 +8,7 @@ import {
 const form = document.getElementById("barangForm");
 const statusEl = document.getElementById("status");
 const popup = document.getElementById("popup");
-const fotoPengambilanInput = document.getElementById("fotoPengambilan");
+const fotoInput = document.getElementById("fotoPengambilan");
 const sendBtn = form?.querySelector("button[type='submit']");
 
 // 🔹 Ambil email user dari localStorage (login.js sudah simpan)
@@ -36,8 +36,6 @@ function updateSubmitButton() {
     sendBtn.style.cursor = isPhotoReady ? "pointer" : "not-allowed";
   }
 }
-
-// Panggil saat load
 updateSubmitButton();
 
 // ===== Fungsi cek stok & kurangi =====
@@ -64,36 +62,57 @@ async function cekStokDanKurangi(namaBarang, jumlahPinjam) {
       stokSekarang = d.data().jumlahBarang || 0;
     });
 
-   if (stokSekarang < jumlahPinjam) {
-  alert("❌ Stok tidak cukup. Stok tersedia: " + stokSekarang);
-  if (sendBtn) {
-    // Nonaktifkan tombol sementara
-    sendBtn.disabled = true;
-    sendBtn.textContent = "Barang tidak cukup";
-    sendBtn.style.cursor = "not-allowed";
+    if (stokSekarang < jumlahPinjam) {
+      alert("❌ Stok tidak cukup. Stok tersedia: " + stokSekarang);
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Barang tidak cukup";
+        sendBtn.style.cursor = "not-allowed";
 
-    // Kembalikan tombol setelah 3 detik
-    setTimeout(() => {
-      sendBtn.disabled = false;
-      sendBtn.textContent = "Kirim"; // ganti sesuai teks asli tombolmu
-      sendBtn.style.cursor = "pointer";
-    }, 3000); // 3000 ms = 3 detik
-  }
-  return false;
-}
+        setTimeout(() => {
+          sendBtn.disabled = false;
+          sendBtn.textContent = "Kirim";
+          sendBtn.style.cursor = "pointer";
+        }, 3000);
+      }
+      return false;
+    }
 
-
-    // Kurangi stok
     const newStok = stokSekarang - jumlahPinjam;
-    await updateDoc(doc(db, "barangMasuk", docId), {
-      jumlahBarang: newStok
-    });
+    await updateDoc(doc(db, "barangMasuk", docId), { jumlahBarang: newStok });
 
     console.log(`✅ Stok ${namaBarang} dikurangi: ${stokSekarang} → ${newStok}`);
     return true;
+
   } catch (err) {
     console.error("❌ Gagal cek stok:", err);
     return false;
+  }
+}
+
+// ===== Fungsi update pengembalian =====
+async function updatePengembalian(kodePengajuan) {
+  if (!kodePengajuan) return alert("❌ Kode pengajuan kosong!");
+  if (!window.uploadedPhotos || !window.uploadedPhotos.length) return alert("❌ Upload minimal 1 foto pengembalian!");
+
+  try {
+    const q = query(collection(db, "peminjaman"), where("kodePengajuan", "==", kodePengajuan));
+    const snap = await getDocs(q);
+
+    if (snap.empty) return alert("❌ Data dengan kode pengajuan ini tidak ditemukan!");
+
+    snap.forEach(async (d) => {
+      await updateDoc(doc(db, "peminjaman", d.id), {
+        fotoPengembalian: window.uploadedPhotos.map(f => f.fileLink),
+        fotoIdPengembalian: window.uploadedPhotos.map(f => f.fileId)
+      });
+      console.log(`✅ Foto pengembalian berhasil ditambahkan ke dokumen ID: ${d.id}`);
+    });
+
+    alert("✅ Foto pengembalian berhasil disimpan!");
+  } catch (err) {
+    console.error("❌ Gagal simpan pengembalian:", err);
+    alert("❌ Terjadi kesalahan: " + err.message);
   }
 }
 
@@ -111,19 +130,13 @@ if (!form) {
 
     if (statusEl) statusEl.textContent = "⏳ Menyimpan data...";
 
-    // Data umum
     const namaPeminjam = document.getElementById("namaPeminjam")?.value.trim() || "";
     const kelasJabatan = document.getElementById("kelasInput")?.value.trim() || "";
     const tanggalPeminjaman = document.getElementById("tanggalPeminjaman")?.value || "";
-
-    // 🔹 Ambil tipe pengajuan (radio button)
     const tipePengajuan = document.querySelector("input[name='tipePengajuan']:checked")?.value || "";
-
-    // 🔹 Ambil keperluan
     const keperluan = document.getElementById("keperluanInput")?.value.trim() || "";
-// 🔹 Ambil kode pengajuan dari input
-const kodePengajuan = document.getElementById("kodePengajuan")?.value.trim() || "";
-    // 🔹 Ambil semua barang dari dynamic field
+    const kodePengajuan = document.getElementById("kodePengajuan")?.value.trim() || "";
+
     const barangDipinjam = [];
     document.querySelectorAll(".barang-field").forEach((field) => {
       const i = field.dataset.index;
@@ -137,34 +150,35 @@ const kodePengajuan = document.getElementById("kodePengajuan")?.value.trim() || 
       }
     });
 
-    if (barangDipinjam.length === 0) {
-      alert("❌ Minimal harus ada 1 barang dipinjam!");
-      return;
-    }
+    if (barangDipinjam.length === 0) return alert("❌ Minimal harus ada 1 barang dipinjam!");
 
     try {
-      // 🔹 Cek stok & kurangi untuk setiap barang
+      // 🔹 Cek stok & kurangi
       for (const item of barangDipinjam) {
         const stokOk = await cekStokDanKurangi(item.namaBarang, item.jumlahBarang);
         if (!stokOk) {
           if (statusEl) statusEl.textContent = `❌ Gagal karena stok ${item.namaBarang} tidak cukup.`;
-          return; // stop langsung kalau ada yang gagal
+          return;
         }
       }
-await addDoc(collection(db, "peminjaman"), {
-  kodePengajuan, // ✅ ambil dari field
-  namaPeminjam,
-  kelasJabatan,
-  tanggalPeminjaman,
-  tipePengajuan,
-  keperluan,
-  barangDipinjam,
-  fotoPengambilan: window.uploadedPhotos.map(f => f.fileLink),
-  fotoId: window.uploadedPhotos.map(f => f.fileId),
-  email: currentUserEmail,
-  createdAt: serverTimestamp()
-});
 
+      // 🔹 Simpan data peminjaman
+      await addDoc(collection(db, "peminjaman"), {
+        kodePengajuan,
+        namaPeminjam,
+        kelasJabatan,
+        tanggalPeminjaman,
+        tipePengajuan,
+        keperluan,
+        barangDipinjam,
+        fotoPengambilan: window.uploadedPhotos.map(f => f.fileLink),
+        fotoId: window.uploadedPhotos.map(f => f.fileId),
+        email: currentUserEmail,
+        createdAt: serverTimestamp()
+      });
+
+      // 🔹 Update pengembalian (opsional jika ingin langsung simpan)
+      // await updatePengembalian(kodePengajuan);
 
       if (statusEl) statusEl.textContent = "✅ Data berhasil disimpan!";
       if (popup) popup.innerHTML = `<div style="padding:10px; background:#2ecc71; color:white; border-radius:5px;">
@@ -174,19 +188,17 @@ await addDoc(collection(db, "peminjaman"), {
       // 🔹 Reset form & upload
       form.reset();
       window.uploadedPhotos = [];
-      if (fotoPengambilanInput) {
-        fotoPengambilanInput.value = "";
-        fotoPengambilanInput.dataset.fileId = "";
-        fotoPengambilanInput.dataset.fileLink = "";
+      if (fotoInput) {
+        fotoInput.value = "";
+        fotoInput.dataset.fileId = "";
+        fotoInput.dataset.fileLink = "";
       }
 
       window.updateUploadDebug?.();
       updateSubmitButton();
 
-      // 🔹 Refresh halaman (form kembali bersih)
-      setTimeout(() => {
-        location.reload();
-      }, 1000);
+      // 🔹 Refresh halaman
+      setTimeout(() => location.reload(), 1000);
 
     } catch (error) {
       console.error("❌ Error simpan data:", error);

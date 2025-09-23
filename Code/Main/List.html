@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin - Peminjaman</title>
+  <title>Dashboard Admin - Pengajuan</title>
   <link rel="stylesheet" href="/Main/dashboard_admin.css">
   <link rel="stylesheet" href="/css/refresh.css">
   <link rel="stylesheet" href="/css/footer.css">  
@@ -32,7 +32,7 @@
     <nav style="display: flex; gap: 15px; align-items: center;">
       <a href="dashboard_admin.html">Dashboard</a>
       <a href="barangmasuk.html">Barang Masuk</a>
-      <a href="/Main/List.html">Peminjaman</a>
+      <a href="/Main/List.html">Pengajuan</a>
       <a href="/Dropdown/dropdown.html">Dropdown</a>
       <button onclick="logout()" style="font-weight: bold; padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
         Logout
@@ -43,7 +43,7 @@
 
 <main>
   <div class="dashboard-container">
-    <h2>Database Peminjaman</h2>
+    <h2>Database Pengajuan</h2>
 
   <!-- 🔹 Status & Pagination -->
 <div id="status">⏳ Memuat data...</div>
@@ -66,10 +66,10 @@
       <div class="modal-content">
         <span id="closeFilter" class="close">&times;</span>
         <div class="filter-container">
-          <h3>Filter Data Peminjaman</h3>
-          <label for="searchInput">Cari Peminjam / Barang:</label>
+          <h3>Filter Data Pengajuan</h3>
+          <label for="searchInput">Nama Peminjam / Barang:</label>
           <input type="text" id="searchInput" placeholder="Ketik nama peminjam atau barang...">
-          <label for="searchTanggal">Tanggal Peminjaman:</label>
+          <label for="searchTanggal">Tanggal Pengajuan:</label>
           <input type="date" id="searchTanggal">
         </div>
       </div>
@@ -80,11 +80,14 @@
     <thead>
       <tr>
         <th>No</th>
-        <th>Tanggal Peminjaman <button class="sort-btn">⇅</button></th>
+        <th>Kode Pengajuan</th>
         <th>Nama Peminjam <button class="sort-btn">⇅</button></th>
+        <th>Email <button class="sort-btn">⇅</button></th>
         <th>Kelas / Jabatan <button class="sort-btn">⇅</button></th>
         <th>Nama Barang <button class="sort-btn">⇅</button></th>
         <th>Jumlah Barang <button class="sort-btn">⇅</button></th>
+         <th>Tanggal Peminjaman <button class="sort-btn">⇅</button></th>
+         <th>Tipe Pengajuan <button class="sort-btn">⇅</button></th>
         <th>Keperluan <button class="sort-btn">⇅</button></th>
         <th>Foto Pengambilan (Wajah & Barang) <button class="sort-btn">⇅</button></th>
         <th>Foto Pengembalian (Wajah & Barang) <button class="sort-btn">⇅</button></th>

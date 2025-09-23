@@ -39,11 +39,11 @@ function showPopup(msg, type="info", duration=3000) {
 }
 
 // 🔹 Fungsi debug
-function showDebug(msg) {
-  const p = document.createElement("p");
-  p.textContent = msg;
-  debug.appendChild(p);
-}
+//function showDebug(msg) {
+  //const p = document.createElement("p");
+  //p.textContent = msg;
+  //debug.appendChild(p);
+//}
 
 // 🔹 Event klik register
 registerBtn.addEventListener("click", async () => {
@@ -53,7 +53,7 @@ registerBtn.addEventListener("click", async () => {
 
   if (!nama || !password) {
     showPopup("Nama dan password wajib diisi!", "error");
-    showDebug("❌ Nama atau password kosong");
+   // showDebug("❌ Nama atau password kosong");
     return;
   }
 
@@ -65,7 +65,7 @@ registerBtn.addEventListener("click", async () => {
 
     if (!snap.empty) {
       showPopup("Nama sudah digunakan!", "error");
-      showDebug(`❌ Gagal membuat akun: ${nama} sudah ada`);
+      //showDebug(`❌ Gagal membuat akun: ${nama} sudah ada`);
       return;
     }
 
@@ -78,7 +78,7 @@ registerBtn.addEventListener("click", async () => {
     });
 
     showPopup(`Akun ${role} berhasil dibuat!`, "success");
-    showDebug(`✅ Akun berhasil dibuat: ID=${docRef.id}, Nama=${nama}, Role=${role}`);
+    //showDebug(`✅ Akun berhasil dibuat: ID=${docRef.id}, Nama=${nama}, Role=${role}`);
 
     // reset input
     namaInput.value = "";
@@ -86,6 +86,6 @@ registerBtn.addEventListener("click", async () => {
 
   } catch(err) {
     showPopup("Error: " + err.message, "error");
-    showDebug(`❌ Error: ${err.message}`);
+    //showDebug(`❌ Error: ${err.message}`);
   }
 });
