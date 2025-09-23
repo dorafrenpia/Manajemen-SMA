@@ -1,0 +1,85 @@
+#statusKoneksi {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 12px 20px !important;
+  border-radius: 14px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  letter-spacing: 0.4px !important;
+  text-align: center !important;
+  min-width: 260px !important;
+  transition: all 0.4s ease !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+}
+
+/* Default (memuat data) */
+#statusKoneksi.loading {
+  background: linear-gradient(135deg, #fff7da, #ffe799) !important;
+  color: #856404 !important;
+  border: 1px solid #ffeeba !important;
+  animation: pulse 1.5s infinite !important;
+}
+
+/* Jika sukses terhubung */
+#statusKoneksi.success {
+  background: linear-gradient(135deg, #a8e063, #56ab2f) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 0 15px rgba(40, 167, 69, 0.5) !important;
+  animation: glow 2s infinite alternate !important;
+}
+
+/* Jika error */
+#statusKoneksi.error {
+  background: linear-gradient(135deg, #ff6b6b, #ff3c3c) !important;
+  color: #fff !important;
+  border: none !important;
+  animation: shake 0.6s, glowError 1.5s infinite alternate !important;
+}
+
+/* Animasi pulse (loading) */
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Animasi glow (success) */
+@keyframes glow {
+  from { box-shadow: 0 0 10px rgba(40,167,69,0.4); }
+  to { box-shadow: 0 0 20px rgba(40,167,69,0.8); }
+}
+
+/* Animasi glow error */
+@keyframes glowError {
+  from { box-shadow: 0 0 10px rgba(255,0,0,0.4); }
+  to { box-shadow: 0 0 20px rgba(255,0,0,0.8); }
+}
+
+/* Animasi shake (error) */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+/* Tambah spinner kecil untuk loading */
+#statusKoneksi.loading::before {
+  content: "";
+  width: 14px !important;
+  height: 14px !important;
+  border: 2px solid #856404 !important;
+  border-top-color: transparent !important;
+  border-radius: 50% !important;
+  animation: spin 1s linear infinite !important;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

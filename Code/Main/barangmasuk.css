@@ -18,18 +18,21 @@ body {
 
 /* Header */
 header {
+  width: 100%;
   background-color: #4a90e2;
   color: #fff;
   padding: 15px 0;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
+
 header .container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px; /* bisa dihapus kalau mau full screen */
+  margin: 0;          /* hapus auto supaya menempel kiri-kanan */
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 15px;    /* optional, beri padding dalam container */
 }
 
 header h1 a {

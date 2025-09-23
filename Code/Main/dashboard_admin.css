@@ -38,6 +38,7 @@ body {
 }
 /* Header */
 header {
+  width: 100%;
   background-color: #4a90e2;
   color: #fff;
   padding: 15px 0;
@@ -45,12 +46,13 @@ header {
 }
 
 header .container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px; /* bisa dihapus kalau mau full screen */
+  margin: 0;          /* hapus auto supaya menempel kiri-kanan */
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 15px;    /* optional, beri padding dalam container */
 }
 
 header h1 a {
@@ -63,7 +65,6 @@ header h1 a {
 header h1 a:hover {
   color: #dce6f1;
 }
-
 /* Navigasi */
 nav a {
   color: white;
